@@ -846,78 +846,91 @@ loginPass.addEventListener("keypress", function(e) {
   
   /* COPY */
   
-  async function copyLyrics(){
-  
-    if(!currentSongCard){
-  
-      alert("Pilih lagu");
-  
-      return;
-    }
-  
-    const title =
-      currentSongCard
-      .querySelector(".song-title")
-      .innerText;
-  
-    const lines =
-      document.querySelectorAll(
-        ".song-line"
-      );
-  
-    let text =
-      "🎵 " + title + "\\n\\n";
-  
-    lines.forEach(line => {
-  
-      const chord =
-        line.querySelector(".chord")
-        .innerText;
-  
-      const lyric =
-        line.querySelector(".lyric")
-        .innerText;
-  
-      text +=
-        chord +
-        "\\n" +
-        lyric +
-        "\\n\\n";
-  
-    });
-  
-    try{
-  
-      await navigator.clipboard
-      .writeText(text);
-  
-      alert("Berhasil disalin");
-  
-    }catch{
-  
-      const textarea =
-        document.createElement(
-          "textarea"
-        );
-  
-      textarea.value = text;
-  
-      document.body
-      .appendChild(textarea);
-  
-      textarea.select();
-  
-      document.execCommand(
-        "copy"
-      );
-  
-      textarea.remove();
-  
-      alert("Berhasil disalin");
-  
-    }
-  
-  }
+  /* COPY LYRICS RAPI */
+
+async function copyLyrics(){
+
+if(!currentSongCard){
+
+  alert("Pilih lagu");
+
+  return;
+
+}
+
+const title =
+  currentSongCard
+  .querySelector(".song-title")
+  .innerText;
+
+const lines =
+  document.querySelectorAll(".song-line");
+
+let text = "🎵 " + title + "\n\n";
+
+lines.forEach(line => {
+
+  const chordElement =
+    line.querySelector(".chord");
+
+  const lyricElement =
+    line.querySelector(".lyric");
+
+  const chord =
+    chordElement.innerText;
+
+  const lyric =
+    lyricElement.innerText;
+
+  /* AMBIL POSISI CHORD */
+  const padding =
+    parseInt(
+      chordElement.style.paddingLeft
+    ) || 0;
+
+  /* KONVERSI PIXEL KE SPASI */
+  const spaces =
+    " ".repeat(
+      Math.floor(padding / 8)
+    );
+
+  /* FORMAT RAPI */
+  text +=
+    spaces +
+    chord +
+    "\n" +
+    lyric +
+    "\n\n";
+
+});
+
+try{
+
+  await navigator.clipboard
+  .writeText(text);
+
+  alert("Lirik berhasil disalin!");
+
+}catch{
+
+  const textarea =
+    document.createElement("textarea");
+
+  textarea.value = text;
+
+  document.body.appendChild(textarea);
+
+  textarea.select();
+
+  document.execCommand("copy");
+
+  textarea.remove();
+
+  alert("Lirik berhasil disalin!");
+
+}
+
+}
   
   /* DELETE SONG */
   
