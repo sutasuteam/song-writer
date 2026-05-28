@@ -630,29 +630,43 @@ function prosesMasuk() {
 
 function prosesKeluar() {
 
-if (confirm("Apakah anda yakin ingin keluar dari aplikasi?")) {
+const yakin = confirm(
+  "Apakah anda yakin ingin keluar dari aplikasi?"
+);
 
-  localStorage.removeItem("is_app_unlocked");
+if(!yakin) return;
 
-  appContainer.style.display = "none";
+/* HAPUS LOGIN */
+localStorage.removeItem(
+  "is_app_unlocked"
+);
 
-  loginPage.style.display = "flex";
+/* RESET DATA */
+currentSongCard = null;
 
-  document.getElementById(
-    "songCollection"
-  ).innerHTML = "";
+document.getElementById(
+  "songCollection"
+).innerHTML = "";
 
-  document.getElementById(
-    "songSheet"
-  ).innerHTML = "";
+document.getElementById(
+  "songSheet"
+).innerHTML = "";
 
-  document.getElementById(
-    "audioPlayer"
-  ).src = "";
+document.getElementById(
+  "audioPlayer"
+).src = "";
 
-  currentSongCard = null;
+document.getElementById(
+  "songName"
+).innerText =
+  "No music selected";
 
-}
+document.getElementById(
+  "loginPass"
+).value = "";
+
+/* PAKSA RELOAD */
+location.reload();
 
 }
 
@@ -1083,7 +1097,7 @@ lines.forEach(line => {
   /* AMBIL POSISI CHORD */
   const padding =
     parseInt(
-      chordElement.style.paddingLeft
+      chordElement.style.marginLeft
     ) || 0;
 
   /* KONVERSI PIXEL KE SPASI */
@@ -1336,9 +1350,11 @@ document
     }
   );
   
-  /* INIT */
-  
+ /* INIT */
+
+if(localStorage.getItem("is_app_unlocked") === "true"){
   loadSongs();
+}
   
   </script>
 </body>
