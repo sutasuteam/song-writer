@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Song Writer Pro</title>
+<link rel="shortcut icon" href="song.png" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#111;color:white;}
+.login-page{position:fixed;inset:0;background:#111;display:flex;align-items:center;justify-content:center;z-index:9999;}
+.login-box{width:360px;background:white;padding:30px;border-radius:18px;display:flex;flex-direction:column;gap:14px;}
+.login-box h2{margin:0;font-size:28px;color:#111;}
+#loginPass{width:100%;padding:14px;border-radius:8px;border:1px solid #ccc;font-size:15px;background:white;color:black;}
+#loginBtn{width:100%;padding:14px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;color:white;background:#111;}
+#loginError{color:red;font-weight:bold;margin:0;font-size:14px;}
+.container{width:90%;margin:30px auto;background:#eee;padding:30px;display:grid;grid-template-columns:320px 1fr;gap:30px;border-radius:12px;color:#111;}
+.main-card{display:contents;}
+.app-header{grid-column:1 / -1;display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:5px;}
+.app-header h1{margin:0;font-size:36px;color:#111;}
+.title-actions{display:flex;flex-direction:row;align-items:center;gap:12px;}
+.logout-btn{border:none;border-radius:12px;padding:14px 20px;font-size:16px;font-weight:700;cursor:pointer;width:auto;white-space:nowrap;background:#e63946;color:white;}
+.left-panel{background:black;color:white;padding:30px;border-radius:12px;height:fit-content;}
+.right-panel{background:white;padding:30px;border-radius:12px;display:flex;flex-direction:column;gap:25px;}
+.song-list-title{font-size:24px;margin-top:0;margin-bottom:20px;color:white;}
+.song-header{display:flex;flex-direction:column;gap:12px;margin-bottom:25px;}
+#songTitleInput{width:100%;padding:14px;border-radius:8px;border:1px solid #ccc;font-size:15px;background:white;color:black;}
+.song-header button{width:100%;padding:12px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;color:white;background:#222;}
+#songCollection{display:flex;flex-direction:column;gap:15px;}
+.song-card{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:15px;cursor:pointer;transition:0.2s;}
+.song-card:hover,.song-card.active{border-color:#00d084;background:rgba(255,255,255,0.2);transform:translateY(-2px);}
+.song-title{font-size:18px;margin:0;color:white;}
+input,select,textarea{width:100%;padding:14px;border-radius:8px;border:1px solid #ccc;font-size:15px;}
+.input-area{display:grid;grid-template-columns:1fr auto auto;gap:14px;}
+#lyricInput{background:white;color:black;}
+#chordSelect{background:white;color:black;width:100px;}
+#positionInput{width:100px;background:white;color:black;}
+.action-buttons-group{grid-column:1 / -1;display:flex;gap:12px;}
+.action-buttons-group button{padding:14px;border:none;border-radius:8px;cursor:pointer;font-weight:bold;color:white;background:#111;flex:1;}
+.action-buttons-group button.danger-btn{background:#e63946;}
+.action-buttons-group button.copy-btn{background:#00d084;}
+.music-player{background:#f7f7f7;padding:20px;border-radius:16px;border:1px solid #ddd;}
+.music-player h2{font-size:22px;margin-top:0;margin-bottom:8px;}
+#songName{color:#555;margin-bottom:15px;font-size:15px;}
+audio{width:100%;margin-bottom:14px;}
+#musicUpload{padding:10px;background:white;}
+#songSheet{display:flex;flex-direction:column;gap:20px;}
+.song-line{background:#f9f9f9;border:1px solid #e3e3e3;border-radius:14px;padding:20px;}
+.chord{display:block;color:#c026d3;font-size:22px;font-weight:bold;margin-bottom:8px;}
+.lyric{font-size:24px;line-height:1.6;color:#222;}
+.tools{display:flex;gap:8px;margin-top:14px;}
+.tools button{width:auto !important;padding:8px 14px;font-size:13px;border:none;border-radius:6px;cursor:pointer;color:white;}
+.edit-btn{background:#2563eb;}
+.delete-btn{background:#e63946;}
+@media (max-width:900px){
+  .container{width:100% !important;margin:0 !important;padding:14px !important;display:flex !important;flex-direction:column !important;gap:18px !important;border-radius:0 !important;}
+  .left-panel{order:2;}
+  .right-panel{order:1;}
+  .app-header h1{font-size:24px;}
+}
+</style>
+</head>
+<body>
+
+<div id="loginPage" class="login-page">
+  <div class="login-box">
+    <h2>🔒 Password</h2>
+    <input id="loginPass" type="password" placeholder="Masukkan password">
+    <button id="loginBtn" onclick="prosesMasuk()">Masuk</button>
+    <p id="loginError"></p>
+  </div>
+</div>
+
+<div class="container" id="appContainer" style="display:none;">
+<div class="main-card">
+  <div class="app-header">
+    <h1>🎵 Song Writer Pro</h1>
+    <div class="title-actions">
+      <button class="logout-btn" id="logoutBtn" onclick="prosesKeluar()">🚪 Logout</button>
+    </div>
+  </div>
+  <div class="left-panel">
+    <h2 class="song-list-title">✨ MY SONGS</h2>
+    <div class="song-header">
+      <input type="text" id="songTitleInput" placeholder="Judul Lagu...">
+      <button onclick="createNewSong()">➕ Lagu Baru</button>
+      <button onclick="deleteCurrentSong()" style="background:#e63946;">🗑 Hapus Lagu</button>
+    </div>
+    <div id="songCollection"></div>
+  </div>
+  <div class="right-panel">
+    <div class="input-area">
+      <input type="text" id="lyricInput" placeholder="Tulis lirik...">
+      <select id="chordSelect">
+        <option value="F">F</option>
+        <option value="Fm">Fm</option>
+        <option value="Em">Em</option>
+        <option value="Dm">Dm</option>
+        <option value="C">C</option>
+        <option value="G">G</option>
+        <option value="Am">Am</option>
+        <option value="A">A</option>
+        <option value="E">E</option>
+      </select>
+      <input type="number" id="positionInput" placeholder="Posisi" value="0">
+      <div class="action-buttons-group">
+        <button onclick="addLine()">Tambahkan Lirik</button>
+        <button onclick="resetAllSongs()" class="danger-btn">Reset All Database</button>
+        <button class="copy-btn" onclick="copyLyrics()">📋 Salin Lirik</button>
+      </div>
+    </div>
+    <div class="music-player">
+      <h2>🎧 Demo Music Player</h2>
+      <p id="songName">No music selected</p>
+      <audio id="audioPlayer" controls></audio>
+      <input type="file" id="musicUpload" accept="audio/*">
+    </div>
+    <div id="songSheet"></div>
+  </div>
+</div>
+</div>
+
+<script>
+const loginPage = document.getElementById("loginPage");
+const appContainer = document.getElementById("appContainer");
+const loginPass = document.getElementById("loginPass");
+const loginError = document.getElementById("loginError");
+const MASTER_PASSWORD = "314464"; 
+let currentSongCard = null;
+
+const SUPABASE_URL = "https://btajgtzfoyadcnqfgjsg.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0YWpndHpmb3lhZGNucWZnanNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NTQ3NzEsImV4cCI6MjA5NTMzMDc3MX0.kD81Imzw3NQ_ZTgj5nRPrKfh7Ong7Zmwt7I7WeyeM5M"; 
+
+const supabase = window.supabase ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+if (localStorage.getItem("is_app_unlocked") === "true") {
+  loginPage.style.display = "none";
+  appContainer.style.display = "grid";
+  setTimeout(() => { loadSongs(); }, 300);
+}
+
+function prosesMasuk() {
+  if (loginPass.value === MASTER_PASSWORD) {
+    localStorage.setItem("is_app_unlocked", "true");
+    loginPage.style.display = "none";
+    appContainer.style.display = "grid";
+    loginPass.value = "";
+    loginError.innerText = "";
+    loadSongs();
+  } else {
+    loginError.innerText = "Password salah!";
+  }
+}
+
+function prosesKeluar() {
+  if (confirm("Apakah anda yakin ingin keluar dari aplikasi?")) {
+    localStorage.removeItem("is_app_unlocked");
+    appContainer.style.display = "none";
+    loginPage.style.display = "flex";
+    document.getElementById("songCollection").innerHTML = "";
+    document.getElementById("songSheet").innerHTML = "";
+    document.getElementById("audioPlayer").src = "";
+    currentSongCard = null;
+  }
+}
+
+loginPass.addEventListener("keypress", function(e) {
+  if (e.key === "Enter") { prosesMasuk(); }
+});
+
+async function loadSongs(){
+  if (!supabase) return;
+  const collection = document.getElementById("songCollection");
+  collection.innerHTML = "<p style='padding:10px;color:#aaa;'>Loading songs...</p>";
+  const { data, error } = await supabase.from('songs').select('*').order('created_at', { ascending: false });
+  if (error) {
+    console.error("Gagal mengambil data:", error.message);
+    collection.innerHTML = "<p style='color:red;'>Gagal memuat lagu.</p>";
+    return;
+  }
+  collection.innerHTML = "";
+  data.forEach(song => {
+    const songCard = document.createElement("div");
+    songCard.className = "song-card";
+    songCard.innerHTML = `<h2 class="song-title">${song.title}</h2>`;
+    songCard.dataset.id = song.id;
+    songCard.dataset.content = song.content || "";
+    songCard.dataset.music = song.music || "";
+    songCard.dataset.musicName = song.music_name || "";
+    songCard.onclick = function(){ selectSong(songCard); };
+    collection.appendChild(songCard);
+  });
+}
+
+function selectSong(songCard) {
+  document.querySelectorAll('.song-card').forEach(card => card.classList.remove('active'));
+  currentSongCard = songCard;
+  currentSongCard.classList.add('active');
+  document.getElementById("songSheet").innerHTML = currentSongCard.dataset.content || "";
+  const audioPlayer = document.getElementById("audioPlayer");
+  const songNameElement = document.getElementById("songName");
+  if(currentSongCard.dataset.music && currentSongCard.dataset.music !== "") {
+    audioPlayer.src = currentSongCard.dataset.music;
+    songNameElement.innerText = "Now Playing: " + (currentSongCard.dataset.musicName || "Demo Track");
+  } else {
+    audioPlayer.src = "";
+    songNameElement.innerText = "No music selected";
+  }
+  document.getElementById("musicUpload").value = "";
+}
+
+async function createNewSong() {
+  if (!supabase) return;
+  const judulInput = document.getElementById("songTitleInput"); 
+  const judul = judulInput.value.trim();
+  if (judul === "") {
+    alert("Judul tidak boleh kosong!");
+    return;
+  }
+  const { error } = await supabase.from('songs').insert([{ title: judul, content: '', music: '', music_name: '' }]);
+  if (error) {
+    alert("Gagal menyimpan: " + error.message);
+    return;
+  }
+  alert("✅ Lagu berhasil ditambahkan!");
+  judulInput.value = "";
+  await loadSongs(); 
+}
+
+async function updateCurrentSongInDatabase(){
+  if(!currentSongCard || !supabase) return;
+  const { error } = await supabase.from('songs').update({ 
+    content: currentSongCard.dataset.content,
+    music: currentSongCard.dataset.music,
+    music_name: currentSongCard.dataset.musicName
+  }).eq('id', currentSongCard.dataset.id);
+  if (error) console.error("Gagal sinkronisasi:", error.message);
+}
+
+async function addLine(){
+  const lyric = document.getElementById("lyricInput").value;
+  const chord = document.getElementById("chordSelect").value;
+  const position = document.getElementById("positionInput").value;
+  if(lyric.trim() === ""){ alert("Tulis lirik dulu"); return; }
+  if(!currentSongCard){ alert("Buat atau pilih lagu baru dulu"); return; }
+  const songSheet = document.getElementById("songSheet");
+  songSheet.innerHTML += `
+    <div class="song-line">
+      <div class="chord" style="padding-left:${position}px">${chord}</div>
+      <div class="lyric">${lyric}</div>
+      <div class="tools">
+        <button class="edit-btn" onclick="editLine(this)">✏ Edit</button>
+        <button class="delete-btn" onclick="deleteLine(this)">🗑 Hapus</button>
+      </div>
+    </div>`;
+  currentSongCard.dataset.content = songSheet.innerHTML;
+  document.getElementById("lyricInput").value = "";
+  await updateCurrentSongInDatabase();
+}
+
+async function deleteLine(button){
+  button.closest(".song-line").remove();
+  currentSongCard.dataset.content = document.getElementById("songSheet").innerHTML;
+  await updateCurrentSongInDatabase();
+}
+
+async function editLine(button){
+  const line = button.closest(".song-line");
+  const chord = line.querySelector(".chord");
+  const lyric = line.querySelector(".lyric");
+  const newChord = prompt("Edit chord:", chord.innerText);
+  const newLyric = prompt("Edit lirik:", lyric.innerText);
+  if(newChord !== null) chord.innerText = newChord;
+  if(newLyric !== null) lyric.innerText = newLyric;
+  currentSongCard.dataset.content = document.getElementById("songSheet").innerHTML;
+  await updateCurrentSongInDatabase();
+}
+
+async function deleteCurrentSong(){
+  if(!currentSongCard || !supabase) return;
+  if(confirm("Hapus lagu ini permanen?")){
+    const { error } = await supabase.from('songs').delete().eq('id', currentSongCard.dataset.id);
+    if (error) { alert("Gagal menghapus: " + error.message); return; }
+    currentSongCard.remove();
+    currentSongCard = null;
+    document.getElementById("songSheet").innerHTML = "";
+    document.getElementById("audioPlayer").src = "";
+    document.getElementById("songName").innerText = "No music selected";
+  }
+}
+
+async function resetAllSongs(){
+  if(!supabase) return;
+  if(confirm("Hapus semua lagu di database?")){
+    const { error } = await supabase.from('songs').delete().neq('id', 0); 
+    if(error){ alert("Gagal: " + error.message); return; }
+    document.getElementById("songCollection").innerHTML = "";
+    document.getElementById("songSheet").innerHTML = "";
+    document.getElementById("audioPlayer").src = "";
+    document.getElementById("songName").innerText = "No music selected";
+    currentSongCard = null;
+  }
+}
+
+function copyLyrics(){
+  if(!currentSongCard){ alert("Pilih lagu dulu"); return; }
+  const title = currentSongCard.querySelector(".song-title").innerText;
+  const lines = document.querySelectorAll(".song-line");
+  let finalText = "🎵 " + title + "\n\n";
+  lines.forEach(line => {
+    const chord = line.querySelector(".chord");
+    const lyric = line.querySelector(".lyric");
+    const padding = parseInt(chord.style.paddingLeft) || 0;
+    if(padding <= 0){
+      finalText += lyric.innerText + "\n\n";
+    } else {
+      const spaces = " ".repeat(Math.floor(padding / 8));
+      finalText += spaces + chord.innerText + "\n" + lyric.innerText + "\n\n";
+    }
+  });
+  navigator.clipboard.writeText(finalText).then(() => { alert("Lirik berhasil disalin!"); }).catch(err => { alert("Gagal: " + err); });
+}
+
+document.getElementById("lyricInput").addEventListener("keypress", function(e){ if(e.key === "Enter") addLine(); });
+
+const musicUpload = document.getElementById("musicUpload");
+const audioPlayer = document.getElementById("audioPlayer");
+const songName = document.getElementById("songName");
+
+musicUpload.addEventListener("change", function(){
+  if(!currentSongCard){ alert("Pilih lagu dulu!"); this.value = ""; return; }
+  const file = this.files[0];
+  if(file){
+    if(file.size > 8 * 1024 * 1024) { alert("File terlalu besar (Maks 8MB)!"); this.value = ""; return; }
+    const reader = new FileReader();
+    reader.onload = async function(e){
+      try {
+        currentSongCard.dataset.music = e.target.result;
+        currentSongCard.dataset.musicName = file.name;
+        audioPlayer.src = e.target.result;
+        songName.innerText = "Now Playing: " + file.name;
+        await updateCurrentSongInDatabase();
+        alert("Musik demo berhasil disimpan!");
+      } catch(error) { alert("Gagal memproses musik."); }
+    };
+    reader.readAsDataURL(file);
+  }
+});
+</script>
+</body>
+</html>
