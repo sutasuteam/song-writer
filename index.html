@@ -290,93 +290,238 @@ audio{
 }
 
 /* SONG SHEET / LYRICS VIEW */
-#songSheet {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+#songSheet{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
 }
 
 .song-line{
-  background: #f9f9f9;
-  border: 1px solid #e3e3e3;
-  border-radius: 14px;
-  padding: 20px;
+  padding:0;
+  margin-bottom:18px;
+
+  background:transparent;
+  border:none;
+  border-radius:0;
+
+  box-shadow:none;
 }
 
 .chord{
-  display: block;
-  color: #c026d3;
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 8px;
+  display:block;
+
+  color:#c026d3;
+
+  font-size:28px;
+  font-weight:bold;
+
+  margin-bottom:6px;
 }
 
 .lyric{
-  font-size: 24px;
-  line-height: 1.6;
-  color: #222;
+  font-size:34px;
+
+  line-height:1.5;
+
+  color:#111;
+
+  word-break:break-word;
 }
 
 .tools{
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
+  display:flex;
+  gap:10px;
+
+  margin-top:12px;
 }
 
 .tools button{
-  width: auto !important;
-  padding: 8px 14px;
-  font-size: 13px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: white;
+  border:none;
+
+  padding:10px 16px;
+
+  border-radius:12px;
+
+  font-size:15px;
+  font-weight:600;
+
+  cursor:pointer;
+
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  transition:0.2s ease;
+
+  box-shadow:
+    0 4px 10px rgba(0,0,0,0.08);
 }
+
+/* EDIT BUTTON */
 
 .edit-btn{
-  background: #2563eb;
+  background:#2563eb;
+  color:white;
 }
+
+.edit-btn:hover{
+  transform:translateY(-2px);
+
+  background:#1d4ed8;
+}
+
+/* DELETE BUTTON */
 
 .delete-btn{
-  background: #e63946;
+  background:#ef4444;
+  color:white;
 }
 
-@media screen and (max-width: 400px) {
-    .container {
-        display: flex;
-        flex-direction: column;
-    }
+.delete-btn:hover{
+  transform:translateY(-2px);
 
-    .my-songs {
-        order: 1;
-        width: 100%;
-    }
-
-    .lyrics-editor {
-        order: 2;
-        width: 100%;
-    }
+  background:#dc2626;
 }
 
 @media (max-width: 900px){
-  .container{
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 14px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 18px !important;
-    border-radius: 0 !important;
-  }
-  .left-panel {
-    order: 2;
-  }
-  .right-panel {
-    order: 1;
-  }
-  .app-header h1 {
-    font-size: 24px;
-  }
+
+.container{
+  width:100% !important;
+  margin:0 !important;
+  padding:12px !important;
+
+  display:flex !important;
+  flex-direction:column !important;
+
+  gap:18px !important;
+  border-radius:0 !important;
+}
+
+/* MY SONGS PINDAH KE ATAS */
+.left-panel{
+  order:1 !important;
+  width:100%;
+  padding:20px;
+}
+
+/* EDITOR PINDAH KE BAWAH */
+.right-panel{
+  order:2 !important;
+  width:100%;
+  padding:20px;
+}
+
+/* HEADER */
+.app-header{
+  flex-direction:row;
+  align-items:center;
+}
+
+.app-header h1{
+  font-size:22px;
+}
+
+.logout-btn{
+  padding:12px 16px;
+  font-size:15px;
+}
+
+/* INPUT AREA */
+.input-area{
+  display:grid;
+
+  grid-template-columns:
+    1fr 80px 70px;
+
+  gap:10px;
+}
+
+/* INPUT LIRIK BESAR */
+#lyricInput{
+  width:100%;
+  min-width:0;
+
+  font-size:18px;
+  padding:16px;
+
+  height:58px;
+}
+
+/* CHORD */
+#chordSelect{
+  width:100%;
+  font-size:18px;
+  height:58px;
+}
+
+/* POSISI */
+#positionInput{
+  width:100%;
+  font-size:18px;
+  height:58px;
+}
+
+/* TOMBOL */
+.action-buttons-group{
+  grid-column:1 / -1;
+
+  display:grid;
+  grid-template-columns:1fr;
+
+  gap:12px;
+}
+
+.action-buttons-group button{
+  width:100%;
+  font-size:18px;
+  padding:18px;
+}
+
+/* PLAYER */
+.music-player{
+  padding:18px;
+}
+
+.music-player h2{
+  font-size:20px;
+}
+
+/* CARD LIRIK */
+.song-line{
+  padding:18px;
+}
+
+.chord{
+  font-size:28px;
+}
+
+.lyric{
+  font-size:30px;
+  line-height:1.7;
+
+  word-break:break-word;
+}
+
+/* TOMBOL EDIT */
+.tools{
+  flex-wrap:wrap;
+}
+
+.tools button{
+  flex:1;
+  font-size:16px;
+  padding:12px;
+}
+
+/* MY SONGS TITLE */
+.song-list-title{
+  font-size:26px;
+}
+
+.song-title{
+  font-size:20px;
+}
+
 }
 </style>
 </head>
@@ -710,183 +855,194 @@ loginPass.addEventListener("keypress", function(e) {
   /* UPDATE SONG */
   
   async function updateCurrentSong(){
-  
-    if(!currentSongCard)
-      return;
-  
-    const id =
-      currentSongCard.dataset.id;
-  
-    const { error } =
-      await supabaseClient
-      .from("songs")
-      .update({
-        content:
-          currentSongCard.dataset.content,
-  
-        music:
-          currentSongCard.dataset.music,
-  
-        music_name:
-          currentSongCard.dataset.musicName
-      })
-      .eq("id", id);
-  
-    if(error){
-      console.error(error);
-    }
-  
-  }
+
+if(!currentSongCard) return;
+
+const id = currentSongCard.dataset.id;
+
+const { data, error } =
+  await supabaseClient
+  .from("songs")
+  .update({
+    content: currentSongCard.dataset.content
+  })
+  .eq("id", id);
+
+if(error){
+
+  console.error("UPDATE ERROR:", error);
+
+  alert(
+    "Gagal update lagu:\n" +
+    error.message
+  );
+
+  return;
+}
+
+console.log("Berhasil update");
+}
   
   /* ADD LINE */
+
+async function addLine(){
+
+if(!currentSongCard){
+
+  alert("Pilih lagu dulu");
+
+  return;
+}
+
+const lyric =
+  document.getElementById(
+    "lyricInput"
+  ).value;
+
+const chord =
+  document.getElementById(
+    "chordSelect"
+  ).value;
+
+const position =
+  document.getElementById(
+    "positionInput"
+  ).value;
+
+if(lyric.trim()===""){
+
+  alert("Isi lirik");
+
+  return;
+}
+
+const songSheet =
+  document.getElementById(
+    "songSheet"
+  );
+
+/* BARIS LIRIK */
+const line =
+  document.createElement("div");
+
+line.className =
+  "song-line";
+
+line.innerHTML = `
+
+  <div
+    class="chord"
+    style="margin-left:${position}px"
+  >
+    ${chord}
+  </div>
+
+  <div class="lyric">
+    ${lyric}
+  </div>
+
+  <div class="tools">
+
+    <button
+      class="edit-btn"
+      onclick="editLine(this)"
+    >
+      ✏ Edit
+    </button>
+
+    <button
+      class="delete-btn"
+      onclick="deleteLine(this)"
+    >
+      🗑 Hapus
+    </button>
+
+  </div>
+
+`;
+
+songSheet.appendChild(line);
+
+currentSongCard.dataset.content =
+  songSheet.innerHTML;
+
+document.getElementById(
+  "lyricInput"
+).value = "";
+
+await updateCurrentSong();
+
+}
   
-  async function addLine(){
-  
-    if(!currentSongCard){
-  
-      alert("Pilih lagu dulu");
-  
-      return;
-    }
-  
-    const lyric =
-      document.getElementById(
-        "lyricInput"
-      ).value;
-  
-    const chord =
-      document.getElementById(
-        "chordSelect"
-      ).value;
-  
-    const position =
-      document.getElementById(
-        "positionInput"
-      ).value;
-  
-    if(lyric.trim()===""){
-  
-      alert("Isi lirik");
-  
-      return;
-    }
-  
-    const songSheet =
-      document.getElementById(
-        "songSheet"
-      );
-  
-    const line =
-      document.createElement("div");
-  
-    line.className =
-      "song-line";
-  
-    line.innerHTML = `
-      <div
-        class="chord"
-        style="padding-left:${position}px"
-      >
-        ${chord}
-      </div>
-  
-      <div class="lyric">
-        ${lyric}
-      </div>
-  
-      <div class="tools">
-  
-        <button
-          class="edit-btn"
-          onclick="editLine(this)"
-        >
-          ✏ Edit
-        </button>
-  
-        <button
-          class="delete-btn"
-          onclick="deleteLine(this)"
-        >
-          🗑 Hapus
-        </button>
-  
-      </div>
-    `;
-  
-    songSheet.appendChild(line);
-  
-    currentSongCard.dataset.content =
-      songSheet.innerHTML;
-  
-    document.getElementById(
-      "lyricInput"
-    ).value = "";
-  
-    await updateCurrentSong();
-  
-  }
-  
-  /* DELETE LINE */
-  
-  async function deleteLine(btn){
-  
-    btn.closest(".song-line")
-    .remove();
-  
-    currentSongCard.dataset.content =
-      document.getElementById(
-        "songSheet"
-      ).innerHTML;
-  
-    await updateCurrentSong();
-  
-  }
-  
-  /* EDIT LINE */
-  
-  async function editLine(btn){
-  
-    const line =
-      btn.closest(".song-line");
-  
-    const chord =
-      line.querySelector(".chord");
-  
-    const lyric =
-      line.querySelector(".lyric");
-  
-    const newChord =
-      prompt(
-        "Edit chord",
-        chord.innerText
-      );
-  
-    const newLyric =
-      prompt(
-        "Edit lirik",
-        lyric.innerText
-      );
-  
-    if(newChord !== null){
-      chord.innerText =
-        newChord;
-    }
-  
-    if(newLyric !== null){
-      lyric.innerText =
-        newLyric;
-    }
-  
-    currentSongCard.dataset.content =
-      document.getElementById(
-        "songSheet"
-      ).innerHTML;
-  
-    await updateCurrentSong();
-  
-  }
-  
-  /* COPY */
+/* DELETE LINE */
+
+async function deleteLine(btn){
+
+const line =
+  btn.closest(".song-line");
+
+line.remove();
+
+currentSongCard.dataset.content =
+  document.getElementById(
+    "songSheet"
+  ).innerHTML;
+
+await updateCurrentSong();
+
+}
+
+/* EDIT LINE */
+
+async function editLine(btn){
+
+const line =
+  btn.closest(".song-line");
+
+const chordElement =
+  line.querySelector(".chord");
+
+const lyricElement =
+  line.querySelector(".lyric");
+
+const currentChord =
+  chordElement.innerText;
+
+const currentLyric =
+  lyricElement.innerText;
+
+const newChord =
+  prompt(
+    "Edit chord:",
+    currentChord
+  );
+
+if(newChord === null)
+  return;
+
+const newLyric =
+  prompt(
+    "Edit lirik:",
+    currentLyric
+  );
+
+if(newLyric === null)
+  return;
+
+chordElement.innerText =
+  newChord;
+
+lyricElement.innerText =
+  newLyric;
+
+currentSongCard.dataset.content =
+  document.getElementById(
+    "songSheet"
+  ).innerHTML;
+
+await updateCurrentSong();
+
+}
   
   /* COPY LYRICS RAPI */
 
@@ -1043,60 +1199,127 @@ try{
   
   }
   
-  /* MUSIC */
-  
-  document
-  .getElementById("musicUpload")
-  .addEventListener(
-    "change",
-    function(){
-  
-      if(!currentSongCard){
-  
-        alert(
-          "Pilih lagu dulu"
-        );
-  
-        return;
-      }
-  
-      const file =
-        this.files[0];
-  
-      if(!file)
-        return;
-  
-      const reader =
-        new FileReader();
-  
-      reader.onload =
-        async function(e){
-  
-        currentSongCard.dataset.music =
-          e.target.result;
-  
-        currentSongCard.dataset.musicName =
-          file.name;
-  
-        document.getElementById(
-          "audioPlayer"
-        ).src =
-          e.target.result;
-  
-        document.getElementById(
-          "songName"
-        ).innerText =
-          "Now Playing: " +
-          file.name;
-  
-        await updateCurrentSong();
-  
-      };
-  
-      reader.readAsDataURL(file);
-  
+  /* MUSIC UPLOAD KE STORAGE */
+
+document
+.getElementById("musicUpload")
+.addEventListener(
+  "change",
+  async function(){
+
+    if(!currentSongCard){
+
+      alert("Pilih lagu dulu");
+
+      return;
     }
-  );
+
+    const file = this.files[0];
+
+    if(!file) return;
+
+    const audioPlayer =
+      document.getElementById(
+        "audioPlayer"
+      );
+
+    const songName =
+      document.getElementById(
+        "songName"
+      );
+
+    const id =
+      currentSongCard.dataset.id;
+
+    /* NAMA FILE UNIK */
+    const fileName =
+      Date.now() +
+      "-" +
+      file.name;
+
+    /* UPLOAD FILE */
+    const { error: uploadError } =
+      await supabaseClient
+      .storage
+      .from("songs")
+      .upload(
+        fileName,
+        file,
+        {
+          cacheControl: "3600",
+          upsert: false
+        }
+      );
+
+    if(uploadError){
+
+      console.error(uploadError);
+
+      alert(
+        "Upload gagal:\n" +
+        uploadError.message
+      );
+
+      return;
+    }
+
+    /* GET PUBLIC URL */
+    const { data: publicData } =
+      supabaseClient
+      .storage
+      .from("songs")
+      .getPublicUrl(fileName);
+
+    const publicURL =
+      publicData.publicUrl;
+
+    console.log(publicURL);
+
+    /* UPDATE DATABASE */
+    const { error:updateError } =
+      await supabaseClient
+      .from("songs")
+      .update({
+        music: publicURL,
+        music_name: file.name
+      })
+      .eq("id", id);
+
+    if(updateError){
+
+      console.error(updateError);
+
+      alert(
+        "Gagal simpan database"
+      );
+
+      return;
+    }
+
+    /* UPDATE LOCAL DATASET */
+    currentSongCard.dataset.music =
+      publicURL;
+
+    currentSongCard.dataset.musicName =
+      file.name;
+
+    /* PLAY AUDIO */
+    audioPlayer.src = publicURL;
+
+    audioPlayer.load();
+
+    audioPlayer.play();
+
+    songName.innerText =
+      "Now Playing: " +
+      file.name;
+
+    alert(
+      "Musik berhasil diupload!"
+    );
+
+  }
+);
   
   /* ENTER */
   
