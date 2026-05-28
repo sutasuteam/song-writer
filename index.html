@@ -398,7 +398,7 @@ audio{
   <div class="app-header">
     <h1>🎵 Song Writer Pro</h1>
     <div class="title-actions">
-      <button class="logout-btn" id="logoutBtn" onclick="prosesKeluar()">🚪 Logout</button>
+      <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
     </div>
   </div>
 
@@ -481,19 +481,44 @@ function prosesMasuk() {
   }
 }
 
-// FUNGSI TOMBOL LOGOUT (ONCLICK)
+/* FUNGSI TOMBOL LOGOUT */
+
 function prosesKeluar() {
-  if (confirm("Apakah anda yakin ingin keluar dari aplikasi?")) {
-    localStorage.removeItem("is_app_unlocked");
-    appContainer.style.display = "none";
-    loginPage.style.display = "flex";
-    document.getElementById("songCollection").innerHTML = "";
-    document.getElementById("songSheet").innerHTML = "";
-    document.getElementById("audioPlayer").src = "";
-    currentSongCard = null;
-  }
+
+if (confirm("Apakah anda yakin ingin keluar dari aplikasi?")) {
+
+  localStorage.removeItem("is_app_unlocked");
+
+  appContainer.style.display = "none";
+
+  loginPage.style.display = "flex";
+
+  document.getElementById(
+    "songCollection"
+  ).innerHTML = "";
+
+  document.getElementById(
+    "songSheet"
+  ).innerHTML = "";
+
+  document.getElementById(
+    "audioPlayer"
+  ).src = "";
+
+  currentSongCard = null;
+
 }
 
+}
+
+/* AKTIFKAN TOMBOL LOGOUT */
+
+document
+.getElementById("logoutBtn")
+.addEventListener(
+"click",
+prosesKeluar
+);
 // TRIGGER INPUT ENTER DI BOX PASSWORD
 loginPass.addEventListener("keypress", function(e) {
   if (e.key === "Enter") {
