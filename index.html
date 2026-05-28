@@ -636,7 +636,7 @@ const yakin = confirm(
 
 if(!yakin) return;
 
-/* HAPUS LOGIN */
+/* HAPUS STATUS LOGIN */
 localStorage.removeItem(
   "is_app_unlocked"
 );
@@ -665,8 +665,15 @@ document.getElementById(
   "loginPass"
 ).value = "";
 
-/* PAKSA RELOAD */
-location.reload();
+document.getElementById(
+  "loginError"
+).innerText = "";
+
+/* SEMBUNYIKAN APP */
+appContainer.style.display = "none";
+
+/* TAMPILKAN LOGIN */
+loginPage.style.display = "flex";
 
 }
 
