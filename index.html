@@ -341,6 +341,23 @@ audio{
   background: #e63946;
 }
 
+@media screen and (max-width: 400px) {
+    .container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .my-songs {
+        order: 1;
+        width: 100%;
+    }
+
+    .lyrics-editor {
+        order: 2;
+        width: 100%;
+    }
+}
+
 @media (max-width: 900px){
   .container{
     width: 100% !important;
