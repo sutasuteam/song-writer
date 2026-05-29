@@ -269,10 +269,10 @@ body {
 }
 
 .btn-add-chord {
-  padding: 11px 18px;
+  padding: 5px 15px;
   border-radius: 6px;
-  background: #0099cc;
-  color: white;
+  background: none;
+  color: rgb(12, 11, 11);
   font-weight: bold;
   font-size: 15px;
   height: 42px;
@@ -280,7 +280,7 @@ body {
   transition: 0.2s;
 }
 .btn-add-chord:hover {
-  background: #0086b3;
+  background: none;
 }
 
 /* PILIHAN TURUN / SAMBUNG DI SAMPING KANAN */
@@ -379,11 +379,11 @@ body {
 }
 
 .action-buttons-group .main-btn {
-  background: #00d084;
+  background: #555;
   font-size: 17px;
 }
 .action-buttons-group .main-btn:hover {
-  background: #00b872;
+  background: #484d4b;
 }
 
 .action-buttons-group .danger-btn {
@@ -394,10 +394,11 @@ body {
 }
 
 .action-buttons-group .copy-btn {
-  background: #00d084;
+  background: #21ce1b;
+  color: #000000;
 }
 .action-buttons-group .copy-btn:hover {
-  background: #00b872;
+  background: #20d47a;
 }
 
 /* PEMUTAR MUSIK */
@@ -645,7 +646,7 @@ audio {
           <input type="number" class="positionInput" id="mainPos" placeholder="Posisi" value="0">
         </div>
 
-        <button type="button" class="btn-add-chord" onclick="tambahInputChord()">+ Tambah Kolom</button>
+        <button type="button" class="btn-add-chord" onclick="tambahInputChord()">+</button>
         
         <div class="line-option">
           <label>
@@ -662,7 +663,7 @@ audio {
       
       <div class="action-buttons-group">
         <!-- 🔴 SUDAH JADI SATU PERINTAH SAJA 🔴 -->
-        <button class="main-btn" onclick="addLine()">✅ TAMBAH LIRIK & CHORD</button>
+        <button class="main-btn" onclick="addLine()">✅ Tambah Lirik</button>
         <button class="danger-btn" onclick="resetAllSongs()">Reset Data</button>
         <button class="copy-btn" onclick="copyLyrics()">📋 Salin Lirik</button>
       </div>
