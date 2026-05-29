@@ -361,6 +361,11 @@ audio{
     0 4px 10px rgba(0,0,0,0.08);
 }
 
+.app-header, .title-actions {
+  position: relative;
+  z-index: 100;
+}
+
 /* EDIT BUTTON */
 
 .edit-btn{
@@ -560,7 +565,7 @@ audio{
   <div class="app-header">
     <h1>🎵 Song Writer Pro</h1>
     <div class="title-actions">
-      <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+      <button class="logout-btn" id="logoutBtn" onclick="prosesKeluar()">🚪 Logout</button>
     </div>
   </div>
 
@@ -643,71 +648,6 @@ function prosesMasuk() {
   }
 }
 
-/* FUNGSI TOMBOL LOGOUT */
-
-function prosesKeluar() {
-
-const yakin = confirm(
-  "Apakah anda yakin ingin keluar dari aplikasi?"
-);
-
-if(!yakin) return;
-
-/* HAPUS STATUS LOGIN */
-localStorage.removeItem(
-  "is_app_unlocked"
-);
-
-/* RESET DATA */
-currentSongCard = null;
-
-document.getElementById(
-  "songCollection"
-).innerHTML = "";
-
-document.getElementById(
-  "songSheet"
-).innerHTML = "";
-
-document.getElementById(
-  "audioPlayer"
-).src = "";
-
-document.getElementById(
-  "songName"
-).innerText =
-  "No music selected";
-
-document.getElementById(
-  "loginPass"
-).value = "";
-
-document.getElementById(
-  "loginError"
-).innerText = "";
-
-/* SEMBUNYIKAN APP */
-appContainer.style.display = "none";
-
-/* TAMPILKAN LOGIN */
-loginPage.style.display = "flex";
-
-}
-
-/* AKTIFKAN TOMBOL LOGOUT */
-
-const logoutBtn =
-document.getElementById("logoutBtn");
-
-logoutBtn.addEventListener(
-  "click",
-  prosesKeluar
-);
-
-logoutBtn.addEventListener(
-  "touchstart",
-  prosesKeluar
-);
 
 // TRIGGER INPUT ENTER DI BOX PASSWORD
 loginPass.addEventListener("keypress", function(e) {
@@ -1386,6 +1326,39 @@ document
 if(localStorage.getItem("is_app_unlocked") === "true"){
   loadSongs();
 }
+
+/* Pindahkan SEMUA kode ini ke blok <script> paling bawah, sebelum penutup </body> */
+
+/* FUNGSI TOMBOL LOGOUT */
+function prosesKeluar() {
+  const yakin = confirm("Apakah anda yakin ingin keluar dari aplikasi?");
+  if(!yakin) return;
+
+  /* HAPUS STATUS LOGIN */
+  localStorage.removeItem("is_app_unlocked");
+
+  /* RESET DATA */
+  currentSongCard = null;
+  document.getElementById("songCollection").innerHTML = "";
+  document.getElementById("songSheet").innerHTML = "";
+  document.getElementById("audioPlayer").src = "";
+  document.getElementById("songName").innerText = "No music selected";
+  document.getElementById("loginPass").value = "";
+  document.getElementById("loginError").innerText = "";
+
+  /* SEMBUNYIKAN APP & TAMPILKAN LOGIN */
+  appContainer.style.display = "none";
+  loginPage.style.display = "flex";
+}
+
+/* AKTIFKAN TOMBOL LOGOUT */
+document.addEventListener("DOMContentLoaded", function() {
+  const logoutBtn = document.getElementById("logoutBtn");
+  if (logoutBtn) {
+    logoutBtn.addEventListener("click", prosesKeluar);
+    logoutBtn.addEventListener("touchstart", prosesKeluar);
+  }
+});
   
   </script>
 </body>
