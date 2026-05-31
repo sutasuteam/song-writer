@@ -752,17 +752,45 @@ audio {
 }
 .btn-save-genre:hover { background: #218838; }
 
+
+
 /* ✅ TAMPILAN LIRIK DI Halaman Utama (Ada Tombol Edit/Hapus) */
-#songSheet {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background: #f9fafb;
-  padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #eee;
-  min-height: 200px;
-  order: 6;
+.right-panel{
+  display:flex;
+  flex-direction:column;
+}
+
+#songSheet{
+  min-height:300px;
+  max-height:500px;
+
+  overflow-y:auto;
+
+  background: #f8f9fa;
+
+  border: 1px solid #e9ecef;
+  
+  border-radius:12px;
+
+  margin-top:10px;
+  padding:15px;
+}
+
+.song-footer{
+  margin-top:10px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  padding:12px;
+
+  background: #f8f9fa;
+
+  border: 1px solid #e9ecef;
+  border-radius:10px;
+
+  color:#1b1a1a;
 }
 
 .song-line {
@@ -852,6 +880,26 @@ audio {
 
 /* ✅ HALAMAN LIHAT LIRIK (TAMPILAN BERSIH SEPERTI PDF) */
 
+.btn-view-lyric-mini{
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #000000;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.btn-view-lyric-mini:hover{
+  background: #f3f4f6;
+}
+
 #lyricViewPage .chord{
   background:none !important;
   outline:none !important;
@@ -935,14 +983,53 @@ audio {
 .view-chord {
   position: absolute;
   color: #1565c0;
-  font-size: 26px;
+  font-size: 20px;
   font-weight: bold;
 }
 
 .view-lyric {
-  font-size: 32px;
-  line-height: 1.4;
+  font-size: 24px;
+  line-height: 1.5;
   color: #222;
+}
+
+/* KHUSUS WEBVIEW / HP */
+@media (max-width: 768px){
+
+  #lyricViewPage{
+    padding:15px;
+  }
+
+  #lyricViewTitle{
+    font-size:26px;
+  }
+
+  #lyricViewGenre{
+    font-size:15px;
+  }
+
+  .view-chord{
+    font-size:18px;
+  }
+
+  .view-chord-container{
+    height:35px;
+  }
+
+  .view-lyric{
+    font-size:20px;
+    line-height:1.5;
+  }
+
+  .view-line{
+    margin-bottom:20px;
+  }
+
+  #songSheet {
+    min-height: 400px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
 }
 
 /* ================================================== */

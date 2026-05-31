@@ -92,11 +92,9 @@
 
   <!-- ✅ TOMBOL LIHAT LIRIK DITARUH DI SINI -->
   <button
-  id="viewScriptBtn"
-  class="copy-btn"
+  class="btn-view-lyric-mini"
   onclick="bukaHalamanLirik()">
   <i class="fa-solid fa-file-lines"></i>
-  Lihat Lirik
 </button>
 
 </div>
@@ -154,6 +152,15 @@
     </div>
 
     <div id="songSheet"></div>
+
+<div class="song-footer">
+  <span>🎵 Song Writer Pro</span>
+  <span id="lineCounter">0 Baris</span>
+</div>
+
+
+
+
   </div>
 
 </div>
@@ -407,6 +414,7 @@ function geserKanan() {
     }
 
     pasangEventTombolAksi();
+    updatePageCounter();
   }
 
   // ✅ FUNGSI: Tampilkan input untuk edit genre
@@ -536,13 +544,15 @@ function geserKanan() {
     activeChordElement = null;
 
     await updateCurrentSong();
-    pasangEventTombolAksi();
+updatePageCounter();
+pasangEventTombolAksi();
   }
   
 async function deleteLine(btn){
   const line = btn.closest(".song-line");
   line.remove();
   await updateCurrentSong();
+  updatePageCounter();
 }
 
 async function editLine(btn){
@@ -648,6 +658,8 @@ catch {
     document.getElementById("audioPlayer").src = "";
     document.getElementById('displaySongTitle').style.display = "none";
     document.getElementById('genreEditArea').style.display = "none";
+    document.getElementById("lineCounter").innerText =
+    "0 Lembar";
     await loadSongs();
   }
   
@@ -660,6 +672,8 @@ catch {
     document.getElementById("songSheet").innerHTML = "";
     document.getElementById('displaySongTitle').style.display = "none";
     document.getElementById('genreEditArea').style.display = "none";
+    document.getElementById("lineCounter").innerText =
+    "0 Lembar";
   }
   
   document.getElementById("musicUpload")
@@ -825,12 +839,53 @@ document.body.style.background = "#111111";
 }
 
 
+/*updatePageCounter*/
 
+function updatePageCounter(){
 
-  // Panggil fungsi awal saat halaman dimuat
-  window.onload = function(){
+const songSheet =
+    document.getElementById("songSheet");
+
+if(!songSheet){
+    return;
+}
+
+if(songSheet.scrollHeight === 0){
+    document.getElementById("lineCounter").innerText =
+        "0 Lembar";
+    return;
+}
+
+const tinggiTerlihat =
+    songSheet.clientHeight;
+
+const tinggiKonten =
+    songSheet.scrollHeight;
+
+const totalLembar =
+    Math.max(
+        1,
+        Math.ceil(
+            tinggiKonten /
+            tinggiTerlihat
+        )
+    );
+
+document.getElementById("lineCounter").innerText =
+    totalLembar + " Lembar";
+}
+
+window.addEventListener(
+  "resize",
+  updatePageCounter
+);
+
+ // Panggil fungsi awal saat halaman dimuat
+
+ window.onload = function(){
     loadSongs();
-  };
+    updatePageCounter();
+};
 </script>
 </body>
 </html>
