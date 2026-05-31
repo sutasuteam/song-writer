@@ -15,14 +15,6 @@
 <!-- ✅ CSS DIPISAH & DIHUBUNGKAN DI SINI -->
 <link rel="stylesheet" href="CSS/style.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- ✅ DITAMBAH: Agar layar langsung berwarna hitam, tidak putih saat baru dibuka -->
-<style>
-  body {
-    background-color: #111111 !important;
-  }
-</style>
-
 </head>
 
 
@@ -776,7 +768,7 @@ catch {
 
 });
 
-  // ✅ FUNGSI HALAMAN LIHAT LIRIK - DIPERBAIKI AGAR TIDAK MERUBAH WARNA LATAR
+  // ✅ FUNGSI HALAMAN LIHAT LIRIK
   function bukaHalamanLirik() {
 
 if (!currentSongCard) {
@@ -834,7 +826,6 @@ document.getElementById("lyricViewPage").innerHTML = html;
 
 document.getElementById("mainPage").style.display = "none";
 document.getElementById("lyricViewPage").style.display = "block";
-// ✅ DIHAPUS: document.body.style.background = "#111111"; (Ini penyebab layar jadi berantakan)
 }
 
 
@@ -844,7 +835,7 @@ function kembaliKeHalamanUtama(){
 // Tampilkan kembali halaman utama persis seperti semula
 document.getElementById("lyricViewPage").style.display = "none";
 document.getElementById("mainPage").style.display = "grid";
-// ✅ DIHAPUS: document.body.style.background = "#111111"; (Ini penyebab layar putih/berubah)
+document.body.style.background = "#111111";
 }
 
 
