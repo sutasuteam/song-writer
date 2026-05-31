@@ -116,7 +116,7 @@ body {
   flex-direction: column;
   gap: 8px;
   margin-bottom: 15px;
-  background: #1a1a1a;
+  background: #fdfdfd;
   padding: 12px;
   border-radius: 8px;
   border: 1px solid #333;
@@ -124,7 +124,7 @@ body {
 
 .genre-group label {
   font-size: 13px;
-  color: #aaa;
+  color: #0c0b0b;
   font-weight: normal;
 }
 
@@ -165,11 +165,10 @@ body {
 
 /* DAFTAR LAGU */
 #songCollection {
+  margin-top: 12px;
   display: flex;
-  flex-direction: column;  gap: 8px;
-  max-height: 450px;
-  overflow-y: auto;
-  padding-right: 5px;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .song-card {
@@ -179,6 +178,10 @@ body {
   cursor: pointer;
   transition: all 0.25s ease;
   color: #ffffff;
+
+  width: 100%;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .song-card:hover {
@@ -360,6 +363,148 @@ body {
 .btn-remove-chord:hover {
   background: #d62838;
 }
+
+/* ==========================
+   HALAMAN LIHAT LIRIK
+========================== */
+
+#lyricViewPage{
+  display:none;
+  min-height:100vh;
+  background:linear-gradient(180deg,#0f172a,#1e293b);
+  padding:30px;
+  color:white;
+}
+
+.lyric-view-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.lyric-view-header h2{
+  margin:0;
+  font-size:28px;
+}
+
+.btn-back-home{
+  border:none;
+  padding:12px 20px;
+  border-radius:12px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.btn-back-home:hover{
+  transform:translateY(-2px);
+}
+
+#lyricViewTitle{
+  font-size:32px;
+  font-weight:bold;
+  text-align:center;
+  margin-bottom:10px;
+}
+
+#lyricViewGenre{
+  text-align:center;
+  color:#94a3b8;
+  margin-bottom:30px;
+  font-size:18px;
+}
+
+#lyricViewContent{
+  max-width:900px;
+  margin:auto;
+  background:white;
+  color:black;
+  border-radius:20px;
+  padding:35px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+
+.view-line{
+  position:relative;
+  margin-bottom:45px;
+}
+
+.view-chord-container{
+  position:relative;
+  height:28px;
+}
+
+.view-chord{
+  position:absolute;
+  color:#2563eb;
+  font-weight:bold;
+  font-size:15px;
+}
+
+.view-lyric{
+  margin-top:5px;
+  font-size:18px;
+  line-height:1.8;
+}
+
+/*Tombol addline
+
+/* Toolbar tombol klasik */
+.action-buttons-group{
+  display:flex;
+  gap:4px;
+  flex-wrap:wrap;
+  margin-top:15px;
+}
+
+.action-buttons-group button{
+  width:85px;
+  height:60px;
+
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+
+  background:linear-gradient(#f7f7f7,#d9d9d9);
+  border:1px solid #7f7f7f;
+  border-top-color:#ffffff;
+  border-left-color:#ffffff;
+
+  color:#222;
+  font-size:12px;
+  font-weight:normal;
+
+  cursor:pointer;
+  border-radius:0;
+  box-shadow:
+      inset 1px 1px 0 #fff,
+      inset -1px -1px 0 #b0b0b0;
+}
+
+.action-buttons-group button:hover{
+  background:linear-gradient(#ffffff,#e4e4e4);
+}
+
+.action-buttons-group button:active{
+  border-top-color:#7f7f7f;
+  border-left-color:#7f7f7f;
+  border-right-color:#ffffff;
+  border-bottom-color:#ffffff;
+
+  box-shadow:
+      inset 1px 1px 2px rgba(0,0,0,.25);
+}
+
+.action-buttons-group button i{
+  font-size:22px;
+  margin-bottom:2px;
+}
+
+
 
 /* ✅ TOMBOL TAMBAH CHORD DI BARIS SUDAH ADA */
 .btn-add-to-line {

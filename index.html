@@ -17,6 +17,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 
+
 <body>
 
 <!-- ✅ HALAMAN UTAMA -->
@@ -99,23 +100,46 @@
       <div id="chordInputsContainer"></div>
       
       <div class="action-buttons-group">
-        <button class="main-btn" onclick="addLine()">✅ Tambah Lirik</button>
-        <button class="save-btn" onclick="updateCurrentSong()">💾 Simpan Posisi</button>
-        <button class="danger-btn" onclick="resetAllSongs()">Reset Data</button>
-        <button class="copy-btn" onclick="copyLyrics()">📋 Salin Lirik</button>
-      </div>
+
+        <button class="main-btn" onclick="addLine()">
+            <i class="fa-solid fa-arrow-up"></i>
+            <span>Tambah</span>
+        </button>
+    
+        <button class="save-btn" onclick="updateCurrentSong()">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span>Simpan</span>
+        </button>
+    
+        <button class="danger-btn" onclick="resetAllSongs()">
+            <i class="fa-solid fa-trash"></i>
+            <span>Reset</span>
+        </button>
+    
+        <button class="copy-btn" onclick="copyLyrics()">
+            <i class="fa-solid fa-copy"></i>
+            <span>Salin</span>
+        </button>
+    
+    </div>
     </div>
 
     <div class="music-player">
       <h2>🎧 Musik</h2>
       <p id="songName">Belum ada musik</p>
-      <audio id="audioPlayer" controls>
-      <input type="file" id="musicUpload" accept="audio/*">
+    
+      <audio id="audioPlayer" controls></audio>
+    
+      <input
+        type="file"
+        id="musicUpload"
+        accept=".mp3,audio/*"
+      >
     </div>
 
+    <!-- ✅ BAGIAN EDIT & SIMPAN GENRE -->
     <div id="displaySongTitle"></div>
 
-    <!-- ✅ BAGIAN EDIT & SIMPAN GENRE -->
     <div class="genre-edit-area" id="genreEditArea">
       <span id="displaySongGenre"></span>
       <input type="text" id="editGenreInput" placeholder="Ubah genre...">
@@ -154,17 +178,28 @@
   let activeChordElement = null;
 
   function geserKiri() {
-    if(!activeChordElement) { alert("👉 Klik dulu chord yang mau diatur posisinya!"); return; }
-    let posisiSekarang = parseInt(activeChordElement.style.left) || 0;
-    activeChordElement.style.left = (posisiSekarang - 10) + "px";
-  }
+    if(!activeChordElement) return;
 
-  function geserKanan() {
-    if(!activeChordElement) { alert("👉 Klik dulu chord yang mau diatur posisinya!"); return; }
-    let posisiSekarang = parseInt(activeChordElement.style.left) || 0;
-    activeChordElement.style.left = (posisiSekarang + 10) + "px";
-  }
+    let pos =
+        parseInt(activeChordElement.style.left) || 0;
 
+    activeChordElement.style.left =
+        (pos - 10) + "px";
+
+    updateCurrentSong();
+}
+
+function geserKanan() {
+    if(!activeChordElement) return;
+
+    let pos =
+        parseInt(activeChordElement.style.left) || 0;
+
+    activeChordElement.style.left =
+        (pos + 10) + "px";
+
+    updateCurrentSong();
+}
   function pilihChord(e){
     if(e.target.classList.contains('chord')){
       document.querySelectorAll('.chord').forEach(c => c.classList.remove('active-chord'));
@@ -515,43 +550,88 @@ async function editLine(btn){
   await updateCurrentSong();
 }
   
-  async function copyLyrics(){
-    if(!currentSongCard){ alert("Pilih lagu dulu"); return; }
-    const title = currentSongCard.querySelector(".song-title").innerText;
-    const genre = currentSongCard.dataset.genre;
-    const lines = document.querySelectorAll(".song-line");
-    let text = "🎵 " + title + "\n";
-    if(genre) text += "🎸 Genre: " + genre + "\n";
-    text += "------------------------\n\n";
+async function copyLyrics() {
 
-    lines.forEach(line => {
-      const chordElements = line.querySelectorAll(".chord");
-      const lyricElement = line.querySelector(".lyric");
+if (!currentSongCard) {
+    alert("Pilih lagu dulu");
+    return;
+}
 
-      let barisChord = "";
-      chordElements.forEach(chordEl => {
-        const pos = parseInt(chordEl.style.left) || 0;
-        const spasi = " ".repeat(Math.max(0, Math.floor(pos / 8) - barisChord.length));
-        barisChord += spasi + chordEl.textContent;
-      });
+const title =
+    currentSongCard.querySelector(".song-title").innerText;
 
-      const barisLirik = lyricElement ? lyricElement.innerText : "";
-      text += barisChord + "\n" + barisLirik + "\n\n";
+const genre =
+    currentSongCard.dataset.genre || "";
+
+let hasil = "";
+
+hasil += "🎵 " + title + "\n";
+
+if (genre) {
+    hasil += "🎸 Genre: " + genre + "\n";
+}
+
+hasil += "--------------------------------\n\n";
+
+document.querySelectorAll("#songSheet .song-line")
+.forEach(line => {
+
+    const lyric =
+        line.querySelector(".lyric")?.innerText || "";
+
+    const chords =
+        [...line.querySelectorAll(".chord")]
+        .sort((a,b)=>
+            (parseInt(a.style.left)||0)
+            -
+            (parseInt(b.style.left)||0)
+        );
+
+    let chordLine = "";
+
+    chords.forEach(chord => {
+
+        const left =
+            parseInt(chord.style.left) || 0;
+
+        // 1 karakter ≈ 10px
+        const targetPos =
+            Math.round(left / 10);
+
+        while (chordLine.length < targetPos) {
+            chordLine += " ";
+        }
+
+        chordLine += chord.innerText;
     });
 
-    try{
-      await navigator.clipboard.writeText(text);
-      alert("✅ Lirik disalin!");
-    }catch{
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      document.body.appendChild(textarea);
-      textarea.select();
-      document.execCommand("copy");
-      textarea.remove();
-      alert("✅ Lirik disalin!");
-    }
-  }
+    hasil += chordLine + "\n";
+    hasil += lyric + "\n\n";
+
+});
+
+try {
+    await navigator.clipboard.writeText(hasil);
+    alert("✅ Lirik berhasil disalin!");
+}
+catch {
+
+    const textarea =
+        document.createElement("textarea");
+
+    textarea.value = hasil;
+
+    document.body.appendChild(textarea);
+
+    textarea.select();
+
+    document.execCommand("copy");
+
+    textarea.remove();
+
+    alert("✅ Lirik berhasil disalin!");
+}
+}
   
   async function deleteCurrentSong(){
     if(!currentSongCard){ alert("Pilih lagu dulu"); return; }
@@ -577,86 +657,181 @@ async function editLine(btn){
     document.getElementById('genreEditArea').style.display = "none";
   }
   
-document.getElementById("musicUpload").addEventListener("change", async function(){
-    if(!currentSongCard){ alert("Pilih lagu dulu"); return; }
-    const file = this.files[0];
-    if(!file) return;
-    const audioPlayer = document.getElementById("audioPlayer");
-    const songName = document.getElementById("songName");
+  document.getElementById("musicUpload")
+.addEventListener("change", async function(){
 
-    const reader = new FileReader();
-    reader.onload = async function(e){
-      const url = e.target.result;
-      audioPlayer.src = url;
-      songName.innerText = "Sedang Putar: " + file.name;
-      
-      // Simpan data musik ke database
-      const id = currentSongCard.dataset.id;
-      const { error } = await supabaseClient.from("songs").update({
-        music: url,
-        music_name: file.name
-      }).eq("id", id);
-      
-      if(error) alert("❌ Gagal simpan musik: " + error.message);
-      else {
-        // Update data di elemen
-        currentSongCard.dataset.music = url;
-        currentSongCard.dataset.musicName = file.name;
+  if(!currentSongCard){
+    alert("Pilih lagu dulu");
+    return;
+  }
+
+  const file = this.files[0];
+
+  if(!file) return;
+
+  const id =
+    currentSongCard.dataset.id;
+
+  const audioPlayer =
+    document.getElementById("audioPlayer");
+
+  const songName =
+    document.getElementById("songName");
+
+  const fileName =
+    Date.now() + "-" + file.name;
+
+  const { error: uploadError } =
+    await supabaseClient
+    .storage
+    .from("songs")
+    .upload(
+      fileName,
+      file,
+      {
+        cacheControl: "3600",
+        upsert: false
       }
-    };
-    reader.readAsDataURL(file);
-  });
+    );
+
+  if(uploadError){
+    alert(
+      "Upload gagal:\n" +
+      uploadError.message
+    );
+    return;
+  }
+
+  const { data } =
+    supabaseClient
+    .storage
+    .from("songs")
+    .getPublicUrl(fileName);
+
+  const publicURL =
+    data.publicUrl;
+
+  const { error } =
+    await supabaseClient
+    .from("songs")
+    .update({
+      music: publicURL,
+      music_name: file.name
+    })
+    .eq("id", id);
+
+  if(error){
+    alert(
+      "Gagal simpan musik:\n" +
+      error.message
+    );
+    return;
+  }
+
+  currentSongCard.dataset.music =
+    publicURL;
+
+  currentSongCard.dataset.musicName =
+    file.name;
+
+  audioPlayer.src =
+    publicURL;
+
+  audioPlayer.load();
+
+  songName.innerText =
+    "Sedang Putar: " +
+    file.name;
+
+  alert(
+    "✅ Musik berhasil diupload"
+  );
+
+});
 
   // ✅ FUNGSI HALAMAN LIHAT LIRIK
   function bukaHalamanLirik(){
-    if(!currentSongCard){ alert("Pilih lagu dulu!"); return; }
 
-    const judul = document.getElementById('displaySongTitle').innerText;
-    const genre = document.getElementById('displaySongGenre').innerText;
-    const isiLirik = document.getElementById('songSheet').innerHTML;
+if(!currentSongCard){
+    alert("Pilih lagu dulu!");
+    return;
+}
 
-    // Masukkan data ke halaman baru
-    document.getElementById('lyricViewTitle').innerText = judul;
-    document.getElementById('lyricViewGenre').innerText = genre;
+const judul =
+    currentSongCard.querySelector(".song-title").innerText;
 
-    // Ubah tampilan lirik ke versi bersih
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(isiLirik, 'text/html');
-    const barisAsli = doc.querySelectorAll('.song-line');
-    let tampilanBersih = "";
+const genre =
+    currentSongCard.dataset.genre || "Belum diatur";
 
-    barisAsli.forEach(baris => {
-      const chordContainer = baris.querySelector('.chord-container');
-      const lirik = baris.querySelector('.lyric').innerText;
-      
-      tampilanBersih += `<div class="view-line">`;
-      tampilanBersih += `<div class="view-chord-container">`;
-      
-      const semuaChord = chordContainer.querySelectorAll('.chord');
-      semuaChord.forEach(c => {
-        const posisi = c.style.left || "0px";
-        tampilanBersih += `<div class="view-chord" style="left: ${posisi}">${c.innerText}</div>`;
-      });
-      
-      tampilanBersih += `</div>`;
-      tampilanBersih += `<div class="view-lyric">${lirik}</div>`;
-      tampilanBersih += `</div>`;
+document.getElementById("lyricViewTitle").innerText =
+    judul;
+
+document.getElementById("lyricViewGenre").innerText =
+    "🎸 Genre: " + genre;
+
+const semuaBaris =
+    document.querySelectorAll("#songSheet .song-line");
+
+let hasil = "";
+
+semuaBaris.forEach(baris=>{
+
+    const lyricEl =
+        baris.querySelector(".lyric");
+
+    const chordEls =
+        baris.querySelectorAll(".chord");
+
+    hasil += `
+        <div class="view-line">
+            <div class="view-chord-container">
+    `;
+
+    chordEls.forEach(chord=>{
+
+        const posisi =
+            chord.style.left || "0px";
+
+        hasil += `
+            <div class="view-chord"
+                 style="left:${posisi}">
+                ${chord.innerText}
+            </div>
+        `;
     });
 
-    document.getElementById('lyricViewContent').innerHTML = tampilanBersih;
+    hasil += `
+            </div>
 
-    // Tampilkan halaman lirik, sembunyikan halaman utama
-    document.getElementById('mainPage').style.display = 'none';
-    document.getElementById('lyricViewPage').style.display = 'block';
-    document.body.style.background = "#ffffff";
-  }
+            <div class="view-lyric">
+                ${lyricEl ? lyricEl.innerText : ""}
+            </div>
 
-  function kembaliKeHalamanUtama(){
-    // Tampilkan halaman utama, sembunyikan halaman lirik
-    document.getElementById('lyricViewPage').style.display = 'none';
-    document.getElementById('mainPage').style.display = 'grid';
-    document.body.style.background = "#111111";
-  }
+        </div>
+    `;
+});
+
+document.getElementById("lyricViewContent").innerHTML =
+    hasil;
+
+document.getElementById("mainPage").style.display =
+    "none";
+
+document.getElementById("lyricViewPage").style.display =
+    "block";
+}
+
+function kembaliKeHalamanUtama(){
+
+document.getElementById("lyricViewPage").style.display =
+    "none";
+
+document.getElementById("mainPage").style.display =
+    "grid";
+
+document.body.style.background =
+    "#111";
+}
 
   // Panggil fungsi awal saat halaman dimuat
   window.onload = function(){
