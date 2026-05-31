@@ -90,12 +90,17 @@
           <i class="fa-solid fa-chevron-right"></i>
         </button>
 
-        <!-- ✅ TOMBOL LIHAT LIRIK DITARUH DI SINI -->
-        <button type="button" class="btn-view-lyric" onclick="bukaHalamanLirik()">
-          <i class="fa-solid fa-file-lines"></i> Lihat Lirik
-        </button>
+  <!-- ✅ TOMBOL LIHAT LIRIK DITARUH DI SINI -->
+  <button
+  id="viewScriptBtn"
+  class="copy-btn"
+  onclick="bukaHalamanLirik()">
+  <i class="fa-solid fa-file-lines"></i>
+  Lihat Lirik
+</button>
 
-      </div>
+</div>
+
 
       <div id="chordInputsContainer"></div>
       
@@ -126,6 +131,7 @@
 
     <div class="music-player">
       <h2>🎧 Musik</h2>
+    
       <p id="songName">Belum ada musik</p>
     
       <audio id="audioPlayer" controls></audio>
@@ -154,9 +160,8 @@
 </div>
 
 <!-- ✅ HALAMAN LIHAT LIRIK (TERPISAH) -->
-<div id="lyricViewPage">
+<div id="lyricViewPage" style="display: none;">
   <div class="lyric-view-header">
-    <h2>🎵 Tampilan Lirik</h2>
     <button class="btn-back-home" onclick="kembaliKeHalamanUtama()">
       <i class="fa-solid fa-arrow-left"></i> Kembali
     </button>
@@ -750,88 +755,77 @@ catch {
 });
 
   // ✅ FUNGSI HALAMAN LIHAT LIRIK
-  function bukaHalamanLirik(){
+  function bukaHalamanLirik() {
 
-if(!currentSongCard){
-    alert("Pilih lagu dulu!");
-    return;
+if (!currentSongCard) {
+  alert("Pilih lagu dulu!");
+  return;
 }
 
 const judul =
-    currentSongCard.querySelector(".song-title").innerText;
+  currentSongCard.querySelector(".song-title").innerText;
 
 const genre =
-    currentSongCard.dataset.genre || "Belum diatur";
+  currentSongCard.dataset.genre || "Belum diatur";
 
-document.getElementById("lyricViewTitle").innerText =
-    judul;
+const isiLagu =
+  document.getElementById("songSheet").innerHTML;
+  
 
-document.getElementById("lyricViewGenre").innerText =
-    "🎸 Genre: " + genre;
+const html = `
+  <div class="pdf-viewer">
 
-const semuaBaris =
-    document.querySelectorAll("#songSheet .song-line");
+    <div class="pdf-header">
 
-let hasil = "";
+      <button class="pdf-back"
+        onclick="kembaliKeHalamanUtama()">
+        ← Kembali
+      </button>
 
-semuaBaris.forEach(baris=>{
+      <button class="pdf-print"
+        onclick="window.print()">
+        🖨 Print
+      </button>
 
-    const lyricEl =
-        baris.querySelector(".lyric");
+    </div>
 
-    const chordEls =
-        baris.querySelectorAll(".chord");
+    <div class="pdf-paper">
 
-    hasil += `
-        <div class="view-line">
-            <div class="view-chord-container">
-    `;
+      <h1 class="pdf-title">${judul}</h1>
 
-    chordEls.forEach(chord=>{
+      <div class="pdf-genre">
+        🎸 ${genre}
+      </div>
 
-        const posisi =
-            chord.style.left || "0px";
+      <hr>
 
-        hasil += `
-            <div class="view-chord"
-                 style="left:${posisi}">
-                ${chord.innerText}
-            </div>
-        `;
-    });
+      <div class="pdf-song-wrapper">
+        ${isiLagu}
+      </div>
 
-    hasil += `
-            </div>
+    </div>
 
-            <div class="view-lyric">
-                ${lyricEl ? lyricEl.innerText : ""}
-            </div>
+  </div>
+`;
 
-        </div>
-    `;
-});
+document.getElementById("lyricViewPage").innerHTML = html;
 
-document.getElementById("lyricViewContent").innerHTML =
-    hasil;
-
-document.getElementById("mainPage").style.display =
-    "none";
-
-document.getElementById("lyricViewPage").style.display =
-    "block";
+document.getElementById("mainPage").style.display = "none";
+document.getElementById("lyricViewPage").style.display = "block";
 }
+
+
+
 
 function kembaliKeHalamanUtama(){
-
-document.getElementById("lyricViewPage").style.display =
-    "none";
-
-document.getElementById("mainPage").style.display =
-    "grid";
-
-document.body.style.background =
-    "#111";
+// Tampilkan kembali halaman utama persis seperti semula
+document.getElementById("lyricViewPage").style.display = "none";
+document.getElementById("mainPage").style.display = "grid";
+document.body.style.background = "#111111";
 }
+
+
+
 
   // Panggil fungsi awal saat halaman dimuat
   window.onload = function(){
