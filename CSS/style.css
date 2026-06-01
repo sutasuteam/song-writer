@@ -1060,18 +1060,25 @@ audio {
   }
 
   #lyricViewPage{
-    padding:0 !important;
-    padding-top: env(safe-area-inset-top);
-}
-.pdf-header{
-  width:100%;
-  max-width:none;
-  padding:
-    calc(env(safe-area-inset-top) + 15px)
-    15px
-    10px
-    15px;
-}
+    padding:15px !important;
+    padding-top:30px !important;
+    box-sizing:border-box;
+  }
+
+  .pdf-header{
+    width:100%;
+    max-width:none;
+    margin:0 0 20px 0;
+    padding:0;
+  }
+
+  .pdf-paper{
+    width:100%;
+    max-width:none;
+    margin:0;
+    padding:25px;
+    border-radius:0;
+  }
 
   .left-panel,
   .right-panel{
@@ -1105,26 +1112,6 @@ audio {
 
   .view-line{
     margin-bottom:20px;
-  }
-
-  .pdf-viewer{
-    width:100%;
-    padding:0;
-  }
-
-  .pdf-header{
-    width:100%;
-    max-width:none;
-    padding:0 10px;
-    margin-bottom:15px;
-  }
-
-  .pdf-paper{
-    width:100%;
-    max-width:none;
-    margin:0;
-    border-radius:0;
-    padding:25px;
   }
 
   .pdf-song-wrapper{
