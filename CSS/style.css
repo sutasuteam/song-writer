@@ -1005,27 +1005,33 @@ audio {
   margin: 0 auto;
 }
 
-.view-line {
-  margin-bottom: 30px;
+.view-line{
+  padding:12px 0;
+  margin-bottom:8px;
 }
 
-.view-chord-container {
-  position: relative;
-  height: 50px;
-  margin-bottom: 10px;
+.view-chord-container{
+  position:relative;
+  height:45px;
+  margin-bottom:8px;
 }
 
-.view-chord {
-  position: absolute;
-  color: #1565c0;
-  font-size: 20px;
-  font-weight: bold;
+.view-chord{
+  position:absolute;
+  color:#c026d3;
+  font-size:20px;
+  font-weight:bold;
+  white-space:nowrap;
+  line-height:1;
 }
 
-.view-lyric {
-  font-size: 24px;
-  line-height: 1.5;
-  color: #222;
+.view-lyric{
+  font-size:24px;
+  font-family:Arial,sans-serif;
+  line-height:1.5;
+  color:#111;
+  word-break:break-word;
+  min-height:40px;
 }
 
 
@@ -1034,6 +1040,13 @@ audio {
 
 /* KHUSUS WEBVIEW / HP */
 @media (max-width: 768px){
+
+  .container{
+    width:100%;
+    max-width:none;
+    margin:0;
+ }
+
 
   #lyricViewPage{
     padding:15px;
@@ -1047,27 +1060,33 @@ audio {
     font-size:15px;
   }
 
-  .view-chord{
-    font-size:18px;
-  }
-
-  .view-chord-container{
-    height:35px;
-  }
-
-  .view-lyric{
-    font-size:20px;
-    line-height:1.5;
-  }
-
   .view-line{
-    margin-bottom:20px;
+    padding:12px 0;
+    margin-bottom:8px;
   }
-
-  #songSheet {
-    min-height: 400px;
-    max-height: 60vh;
-    overflow-y: auto;
+  
+  .view-chord-container{
+    position:relative;
+    height:45px;
+    margin-bottom:8px;
+  }
+  
+  .view-chord{
+    position:absolute;
+    color:#c026d3;
+    font-size:20px;
+    font-weight:bold;
+    white-space:nowrap;
+    line-height:1;
+  }
+  
+  .view-lyric{
+    font-size:24px;
+    font-family:Arial,sans-serif;
+    line-height:1.5;
+    color:#111;
+    word-break:break-word;
+    min-height:40px;
   }
 }
 
