@@ -382,7 +382,6 @@ body {
 }
 
 
-
 .pdf-song-wrapper{
   width:100%;
   max-width:384px;
@@ -1057,21 +1056,6 @@ audio {
   }
 }
 
-@media screen and (max-width: 400px){
-
-  .pdf-song-wrapper .lyric{
-      font-size:14px;
-  }
-
-  .pdf-song-wrapper .chord{
-      font-size:12px;
-  }
-
-  .pdf-song-wrapper .song-line{
-      min-height:42px;
-  }
-
-}
 
 /* ================================================== */
 /* KHUSUS HP */
