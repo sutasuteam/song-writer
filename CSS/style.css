@@ -393,26 +393,27 @@ body {
   margin:auto;
 }
 
-.pdf-song-wrapper .song-line{
-  transform:scale(0.85);
-  transform-origin:left top;
-  margin-bottom:25px;
+.song-view-wrapper .song-line{
+  margin-bottom:12px;
 }
 
-.pdf-song-wrapper .lyric{
-  font-size:14px;
-}
-
-.pdf-song-wrapper .chord{
-  font-size:12px;
-}
-
-.pdf-song-wrapper .chord-container{
+.song-view-wrapper .chord-container{
   position:relative;
   height:45px;
-  margin-bottom:8px;
 }
 
+.song-view-wrapper .chord{
+  position:absolute;
+  font-size:20px;
+  color:#c026d3;
+  font-weight:bold;
+}
+
+.song-view-wrapper .lyric{
+  font-size:24px;
+  line-height:1.5;
+  color:#111;
+}
 .pdf-song-wrapper .chord{
   position:absolute;
   color:#1565c0;
@@ -1005,33 +1006,27 @@ audio {
   margin: 0 auto;
 }
 
-.view-line{
-  padding:12px 0;
-  margin-bottom:8px;
+.view-line {
+  margin-bottom: 30px;
 }
 
-.view-chord-container{
-  position:relative;
-  height:45px;
-  margin-bottom:8px;
+.view-chord-container {
+  position: relative;
+  height: 50px;
+  margin-bottom: 10px;
 }
 
-.view-chord{
-  position:absolute;
-  color:#c026d3;
-  font-size:20px;
-  font-weight:bold;
-  white-space:nowrap;
-  line-height:1;
+.view-chord {
+  position: absolute;
+  color: #1565c0;
+  font-size: 20px;
+  font-weight: bold;
 }
 
-.view-lyric{
-  font-size:24px;
-  font-family:Arial,sans-serif;
-  line-height:1.5;
-  color:#111;
-  word-break:break-word;
-  min-height:40px;
+.view-lyric {
+  font-size: 24px;
+  line-height: 1.5;
+  color: #222;
 }
 
 
@@ -1060,33 +1055,27 @@ audio {
     font-size:15px;
   }
 
-  .view-line{
-    padding:12px 0;
-    margin-bottom:8px;
-  }
-  
-  .view-chord-container{
-    position:relative;
-    height:45px;
-    margin-bottom:8px;
-  }
-  
   .view-chord{
-    position:absolute;
-    color:#c026d3;
-    font-size:20px;
-    font-weight:bold;
-    white-space:nowrap;
-    line-height:1;
+    font-size:18px;
   }
-  
+
+  .view-chord-container{
+    height:35px;
+  }
+
   .view-lyric{
-    font-size:24px;
-    font-family:Arial,sans-serif;
+    font-size:20px;
     line-height:1.5;
-    color:#111;
-    word-break:break-word;
-    min-height:40px;
+  }
+
+  .view-line{
+    margin-bottom:20px;
+  }
+
+  #songSheet {
+    min-height: 400px;
+    max-height: 60vh;
+    overflow-y: auto;
   }
 }
 
