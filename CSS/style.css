@@ -1078,8 +1078,8 @@ audio {
 @media (max-width: 385px) {
   body { font-size: 14px; }
   .container{
-    width:384px !important;
-    max-width:384px !important;
+    width:400px !important;
+    max-width:400px !important;
     grid-template-columns:1fr !important;
     margin:auto;
   }
