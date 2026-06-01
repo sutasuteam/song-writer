@@ -374,8 +374,33 @@ body {
     min-height:100vh;
     padding:30px;
 }
+
+.pdf-paper{
+  width:384px;
+  max-width:100%;
+  margin:auto;
+}
+
+
+
+.pdf-song-wrapper{
+  width:100%;
+  max-width:384px;
+  margin:auto;
+}
+
 .pdf-song-wrapper .song-line{
-  margin-bottom:35px;
+  transform:scale(0.85);
+  transform-origin:left top;
+  margin-bottom:25px;
+}
+
+.pdf-song-wrapper .lyric{
+  font-size:14px;
+}
+
+.pdf-song-wrapper .chord{
+  font-size:12px;
 }
 
 .pdf-song-wrapper .chord-container{
