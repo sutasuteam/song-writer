@@ -5,6 +5,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+html{
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+
 button {
   -webkit-tap-highlight-color: transparent;
   border: none;
@@ -856,12 +861,18 @@ audio {
 }
 
 .lyric {
-  font-size: 34px;
+  font-size:24px;
+  font-family: Arial, sans-serif;
   line-height: 1.5;
   color: #111;
   word-break: break-word;
   min-height: 40px;
   margin-top: 5px;
+}
+
+.chord{
+  font-size:20px;
+  font-family: Arial, sans-serif;
 }
 
 .tools {
@@ -1017,6 +1028,10 @@ audio {
   color: #222;
 }
 
+
+
+
+
 /* KHUSUS WEBVIEW / HP */
 @media (max-width: 768px){
 
@@ -1062,15 +1077,13 @@ audio {
 /* ================================================== */
 @media (max-width: 385px) {
   body { font-size: 14px; }
-  .container {
-    width: 100%;
-    max-width: 384px;
-    margin: 0 auto;
-    padding: 10px;
-    border-radius: 0;
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .container{
+    width:384px !important;
+    max-width:384px !important;
+    grid-template-columns:1fr !important;
+    margin:auto;
   }
+
   .app-header h1 { font-size: 20px; }
   .left-panel, .right-panel { padding: 15px; border-radius: 8px; }
   .song-list-title { font-size: 18px; }
@@ -1081,8 +1094,7 @@ audio {
   .btn-gestur { width: 32px; height: 32px; font-size: 14px; }
   .btn-view-lyric { padding: 0 8px; height: 32px; font-size: 12px; margin-left: 4px; }
   .btn-add-chord { padding:  0 10px; font-size: 13px; height: 32px; }
-  .lyric { font-size: 20px; }
-  .chord { font-size: 18px; }
+
   .action-buttons-group button { padding: 10px; font-size: 14px; }
   .song-title { font-size: 14px; }
   .tools button { 
