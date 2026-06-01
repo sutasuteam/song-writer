@@ -1059,6 +1059,11 @@ audio {
     border-radius:0;
   }
 
+  #lyricViewPage{
+    padding:0 !important;
+  }
+
+
   .left-panel,
   .right-panel{
     width:100%;
@@ -1092,6 +1097,33 @@ audio {
   .view-line{
     margin-bottom:20px;
   }
+
+  .pdf-viewer{
+    width:100%;
+    padding:0;
+  }
+
+  .pdf-header{
+    width:100%;
+    max-width:none;
+    padding:0 10px;
+    margin-bottom:15px;
+  }
+
+  .pdf-paper{
+    width:100%;
+    max-width:none;
+    margin:0;
+    border-radius:0;
+    padding:25px;
+  }
+
+  .pdf-song-wrapper{
+    width:100%;
+    max-width:none;
+  }
+
+
 
   #songSheet {
     min-height: 400px;
