@@ -782,8 +782,13 @@ const judul =
 const genre =
   currentSongCard.dataset.genre || "Belum diatur";
 
-const isiLagu =
-  document.getElementById("songSheet").innerHTML;
+  const clone =
+  document.getElementById("songSheet").cloneNode(true);
+
+// Hapus semua tombol tools
+clone.querySelectorAll('.tools').forEach(el => el.remove());
+
+const isiLagu = clone.innerHTML;
   
 
 const html = `
@@ -793,7 +798,7 @@ const html = `
 
       <button class="pdf-back"
         onclick="kembaliKeHalamanUtama()">
-        ← Kembali
+        Kembali
       </button>
 
       <button class="pdf-print"
