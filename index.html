@@ -12,9 +12,19 @@
 
 <link rel="shortcut icon" href="song.png" type="image/x-icon">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<!-- ✅ CSS DIPISAH & DIHUBUNGKAN DI SINI -->
+<!-- ✅ CSS DIPISAH & DIHUBUNGKAN DI SINI (tetap sama seperti punyamu, tidak berubah) -->
 <link rel="stylesheet" href="CSS/style.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- ============================================================
+     🔥 FIREBASE — menggantikan Supabase
+     ============================================================
+     Pakai versi "compat" supaya cara pemakaiannya paling mirip
+     dengan gaya supabase-js yang sudah kamu kenal (db.collection...
+     bukan modular import). -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<!-- Firebase Storage TIDAK dipakai lagi (butuh plan Blaze / kartu).
+     File musik sekarang diupload ke Cloudinary — gratis selamanya, tanpa kartu. -->
 </head>
 
 
@@ -182,10 +192,46 @@
 
 
 <script>
-  const SUPABASE_URL = "https://btajgtzfoyadcnqfgjsg.supabase.co";
-  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0YWpndHpmb3lhZGNucWZnanNnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk3NTQ3NzEsImV4cCI6MjA5NTMzMDc3MX0.kD81Imzw3NQ_ZTgj5nRPrKfh7Ong7Zmwt7I7WeyeM5M";
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  
+  /* ============================================================
+     🔥 KONFIGURASI FIREBASE — GANTI DENGAN MILIKMU SENDIRI
+     ============================================================
+     Cara mendapatkan nilai-nilai di bawah ini:
+     1. Buka https://console.firebase.google.com
+     2. Klik "Add project" → beri nama bebas (mis. "song-writer-pro") → lanjut sampai selesai
+     3. Di dashboard project, klik ikon "</>" (Web app) untuk daftarkan web app baru
+     4. Firebase akan menampilkan blok firebaseConfig persis seperti di bawah ini — salin ke sini
+     5. Di menu kiri: Build → Firestore Database → Create database → pilih "Start in test mode" (biar mudah dulu)
+     6. Di menu kiri: Build → Storage → Get started → pilih "Start in test mode" juga
+
+     ⚠️ "Test mode" artinya siapa saja yang tahu config-mu bisa baca/tulis data.
+     Aman untuk belajar/pribadi, tapi kalau nanti dipakai banyak orang,
+     baca bagian "SECURITY RULES" di bawah untuk menguncinya.
+  */
+  const firebaseConfig = {
+  apiKey: "AIzaSyDbsnytQw6Y6QodWu2dRGkzDsakHhmlH_A",
+  authDomain: "song-writer-pro.firebaseapp.com",
+  projectId: "song-writer-pro",
+  storageBucket: "song-writer-pro.firebasestorage.app",
+  messagingSenderId: "40347373117",
+  appId: "1:40347373117:web:0bd09b184210c58866a454",
+  measurementId: "G-EHZWJWGF7L"
+};
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const songsCollection = db.collection("songs");
+
+  /* ============================================================
+     🌤️ KONFIGURASI CLOUDINARY — untuk upload file musik
+     ============================================================
+     - CLOUD_NAME sudah diisi sesuai akun kamu.
+     - UPLOAD_PRESET: ganti dengan nama preset "Unsigned" yang kamu
+       buat di Cloudinary Console → Settings → Upload → Upload presets.
+  */
+  const CLOUDINARY_CLOUD_NAME = "y6hrjigr";
+  const CLOUDINARY_UPLOAD_PRESET = "song_writer_music";
+  const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
+
   let currentSongCard = null;
   let activeChordElement = null;
 
@@ -315,35 +361,35 @@ function geserKanan() {
     };
   }
 
-  // ✅ DIPERBAIKI: Mengambil dan memuat data GENRE dari Supabase
+  // ✅ Mengambil dan memuat data dari Firestore (koleksi "songs")
   async function loadSongs(){
     const collection = document.getElementById("songCollection");
     collection.innerHTML = "<p style='color:#aaa; font-size:14px; padding:8px;'>Memuat...</p>";
-  
-    const { data, error } = await supabaseClient.from("songs").select("*").order("created_at", { ascending:false });
-  
-    if(error){
+
+    try{
+      const snapshot = await songsCollection.orderBy("createdAt", "desc").get();
+
+      collection.innerHTML = "";
+      snapshot.forEach(doc => {
+        const song = doc.data();
+        const card = document.createElement('div');
+        card.className = "song-card";
+        card.dataset.id = doc.id;
+        card.dataset.content = song.content || "";
+        card.dataset.simpanPosisi = song.simpan_posisi || "";
+        card.dataset.genre = song.genre || "";
+        card.dataset.music = song.music || "";
+        card.dataset.musicName = song.music_name || "";
+        card.innerHTML = `<h2 class="song-title">${song.title}</h2>`;
+        card.addEventListener("click", () => selectSong(card));
+        collection.appendChild(card);
+      });
+
+      pasangEventTombolAksi();
+    }catch(error){
       console.error(error);
       collection.innerHTML = "<p style='color:red; font-size:14px; padding:8px;'>Gagal memuat: " + error.message + "</p>";
-      return;
     }
-  
-    collection.innerHTML = "";
-    data.forEach(song => {
-      const card = document.createElement('div');
-      card.className = "song-card";
-      card.dataset.id = song.id;
-      card.dataset.content = song.content || ""; 
-      card.dataset.simpanPosisi = song.simpan_posisi || "";
-      card.dataset.genre = song.genre || ""; // ✅ GENRE DIAMBIL DARI DATABASE
-      card.dataset.music = song.music || "";
-      card.dataset.musicName = song.music_name || "";
-      card.innerHTML = `<h2 class="song-title">${song.title}</h2>`;
-      card.addEventListener("click", () => selectSong(card));
-      collection.appendChild(card);
-    });
-
-    pasangEventTombolAksi();
   }
 
   function pasangEventTombolAksi(){
@@ -371,14 +417,13 @@ function geserKanan() {
     }
   }
   
-  // ✅ DIPERBAIKI: Menampilkan GENRE yang tersimpan saat lagu dipilih
   function selectSong(card){
     document.querySelectorAll(".song-card").forEach(c => c.classList.remove("active"));
     currentSongCard = card;
     card.classList.add("active");
 
     const judulLagu = card.querySelector('.song-title').innerText;
-    const genreLagu = card.dataset.genre; // ✅ Mengambil dari dataset
+    const genreLagu = card.dataset.genre;
 
     const displayJudul = document.getElementById('displaySongTitle');
     const displayGenre = document.getElementById('displaySongGenre');
@@ -388,7 +433,6 @@ function geserKanan() {
     displayJudul.innerText = judulLagu;
     displayJudul.style.display = "block";
 
-    // ✅ Tampilkan Genre & Tombol Edit
     if(genreLagu && genreLagu.trim() !== ""){
       displayGenre.innerText = "🎸 Genre: " + genreLagu;
     } else {
@@ -417,7 +461,6 @@ function geserKanan() {
     updatePageCounter();
   }
 
-  // ✅ FUNGSI: Tampilkan input untuk edit genre
   function tampilkanEditGenre(){
     const displayGenre = document.getElementById('displaySongGenre');
     const editInput = document.getElementById('editGenreInput');
@@ -434,17 +477,19 @@ function geserKanan() {
     btnSave.style.display = "block";
   }
 
-  // ✅ FUNGSI: Simpan perubahan genre ke database
+  // ✅ Simpan perubahan genre ke Firestore
   async function simpanEditGenre(){
     const editInput = document.getElementById('editGenreInput');
     const nilaiBaru = editInput.value.trim();
     const id = currentSongCard.dataset.id;
 
-    // Simpan ke database
-    const { error } = await supabaseClient.from("songs").update({ genre: nilaiBaru }).eq("id", id);
-    if(error){ alert("❌ Gagal ubah genre: " + error.message); return; }
+    try{
+      await songsCollection.doc(id).update({ genre: nilaiBaru });
+    }catch(error){
+      alert("❌ Gagal ubah genre: " + error.message);
+      return;
+    }
 
-    // Update tampilan & data lokal
     currentSongCard.dataset.genre = nilaiBaru;
     const displayGenre = document.getElementById('displaySongGenre');
     
@@ -454,7 +499,6 @@ function geserKanan() {
       displayGenre.innerText = "🎸 Genre: Belum diatur";
     }
 
-    // Kembali ke tampilan awal
     editInput.style.display = "none";
     document.getElementById('btnEditGenre').style.display = "block";
     document.getElementById('btnSaveGenre').style.display = "none";
@@ -463,7 +507,7 @@ function geserKanan() {
     alert("✅ Genre berhasil diubah!");
   }
   
-  // ✅ DIPERBAIKI: Menyimpan GENRE saat lagu BARU dibuat
+  // ✅ Membuat lagu baru di Firestore
   async function createNewSong(){
     const input = document.getElementById("songTitleInput");
     const genreInput = document.getElementById("songGenre");
@@ -471,23 +515,28 @@ function geserKanan() {
     const genreValue = genreInput.value.trim();
 
     if(inputValue === ""){ alert("Masukkan judul lagu"); return; }
-  
-    const { error } = await supabaseClient.from("songs").insert([{ 
-      title: inputValue, 
-      genre: genreValue, // ✅ GENRE DISIMPAN KE DATABASE
-      content: "", 
-      simpan_posisi: "", 
-      music: "", 
-      music_name: "" 
-    }]);
-  
-    if(error){ alert(error.message); return; }
+
+    try{
+      await songsCollection.add({
+        title: inputValue,
+        genre: genreValue,
+        content: "",
+        simpan_posisi: "",
+        music: "",
+        music_name: "",
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }catch(error){
+      alert(error.message);
+      return;
+    }
+
     input.value = "";
     genreInput.value = "";
     await loadSongs();
   }
   
-  // ✅ DIPERBAIKI: Menyimpan PERUBAHAN GENRE saat tombol SIMPAN ditekan
+  // ✅ Menyimpan perubahan lirik/chord ke Firestore
   async function updateCurrentSong(){
     if(!currentSongCard) return;
     const id = currentSongCard.dataset.id;
@@ -495,12 +544,11 @@ function geserKanan() {
     const isiPosisi = document.getElementById("songSheet").innerHTML;
     currentSongCard.dataset.simpanPosisi = isiPosisi;
 
-    // ✅ UPDATE KE DATABASE SUPABASE
-    const { error } = await supabaseClient.from("songs").update({ 
-      simpan_posisi: isiPosisi
-    }).eq("id", id);
-  
-    if(error){ alert("❌ Gagal simpan:\n" + error.message); }
+    try{
+      await songsCollection.doc(id).update({ simpan_posisi: isiPosisi });
+    }catch(error){
+      alert("❌ Gagal simpan:\n" + error.message);
+    }
   }
   
   async function addLine(){
@@ -609,7 +657,6 @@ document.querySelectorAll("#songSheet .song-line")
         const left =
             parseInt(chord.style.left) || 0;
 
-        // 1 karakter ≈ 10px
         const targetPos =
             Math.round(left / 10);
 
@@ -648,11 +695,17 @@ catch {
 }
 }
   
+  // ✅ Hapus satu lagu dari Firestore
   async function deleteCurrentSong(){
     if(!currentSongCard){ alert("Pilih lagu dulu"); return; }
     if(!confirm("Hapus lagu ini?")) return;
     const id = currentSongCard.dataset.id;
-    await supabaseClient.from("songs").delete().eq("id", id);
+    try{
+      await songsCollection.doc(id).delete();
+    }catch(error){
+      alert("❌ Gagal hapus: " + error.message);
+      return;
+    }
     currentSongCard = null;
     document.getElementById("songSheet").innerHTML = "";
     document.getElementById("audioPlayer").src = "";
@@ -663,10 +716,18 @@ catch {
     await loadSongs();
   }
   
+  // ✅ Hapus SEMUA lagu — pakai batch delete Firestore
   async function resetAllSongs(){
     if(!confirm("HapUS SEMUA lagu? Tindakan ini tidak bisa dibatalkan!")) return;
-    const { error } = await supabaseClient.from("songs").delete().gt("id", 0);
-    if(error){ alert(error.message); return; }
+    try{
+      const snapshot = await songsCollection.get();
+      const batch = db.batch();
+      snapshot.forEach(doc => batch.delete(doc.ref));
+      await batch.commit();
+    }catch(error){
+      alert(error.message);
+      return;
+    }
     currentSongCard = null;
     document.getElementById("songCollection").innerHTML = "";
     document.getElementById("songSheet").innerHTML = "";
@@ -676,6 +737,7 @@ catch {
     "0 Lembar";
   }
   
+  // ✅ Upload musik ke Cloudinary (menggantikan Firebase Storage — gratis tanpa kartu)
   document.getElementById("musicUpload")
 .addEventListener("change", async function(){
 
@@ -697,75 +759,45 @@ catch {
   const songName =
     document.getElementById("songName");
 
-  const fileName =
-    Date.now() + "-" + file.name;
+  songName.innerText = "Mengunggah " + file.name + " ...";
 
-  const { error: uploadError } =
-    await supabaseClient
-    .storage
-    .from("songs")
-    .upload(
-      fileName,
-      file,
-      {
-        cacheControl: "3600",
-        upsert: false
-      }
-    );
+  try{
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append("resource_type", "video"); // Cloudinary memperlakukan file audio di bawah kategori "video"
 
-  if(uploadError){
-    alert(
-      "Upload gagal:\n" +
-      uploadError.message
-    );
-    return;
-  }
+    const response = await fetch(CLOUDINARY_UPLOAD_URL, {
+      method: "POST",
+      body: formData
+    });
 
-  const { data } =
-    supabaseClient
-    .storage
-    .from("songs")
-    .getPublicUrl(fileName);
+    const data = await response.json();
 
-  const publicURL =
-    data.publicUrl;
+    if(!response.ok){
+      throw new Error(data.error?.message || "Upload ke Cloudinary gagal");
+    }
 
-  const { error } =
-    await supabaseClient
-    .from("songs")
-    .update({
+    const publicURL = data.secure_url;
+
+    await songsCollection.doc(id).update({
       music: publicURL,
       music_name: file.name
-    })
-    .eq("id", id);
+    });
 
-  if(error){
-    alert(
-      "Gagal simpan musik:\n" +
-      error.message
-    );
-    return;
+    currentSongCard.dataset.music = publicURL;
+    currentSongCard.dataset.musicName = file.name;
+
+    audioPlayer.src = publicURL;
+    audioPlayer.load();
+
+    songName.innerText = "Sedang Putar: " + file.name;
+
+    alert("✅ Musik berhasil diupload");
+  }catch(error){
+    songName.innerText = currentSongCard.dataset.musicName ? "Sedang Putar: " + currentSongCard.dataset.musicName : "Belum ada musik";
+    alert("Upload gagal:\n" + error.message);
   }
-
-  currentSongCard.dataset.music =
-    publicURL;
-
-  currentSongCard.dataset.musicName =
-    file.name;
-
-  audioPlayer.src =
-    publicURL;
-
-  audioPlayer.load();
-
-  songName.innerText =
-    "Sedang Putar: " +
-    file.name;
-
-  alert(
-    "✅ Musik berhasil diupload"
-  );
-
 });
 
   // ✅ FUNGSI HALAMAN LIHAT LIRIK
@@ -785,7 +817,6 @@ const genre =
   const clone =
   document.getElementById("songSheet").cloneNode(true);
 
-// Hapus semua tombol tools
 clone.querySelectorAll('.tools').forEach(el => el.remove());
 
 const isiLagu = clone.innerHTML;
@@ -837,7 +868,6 @@ document.getElementById("lyricViewPage").style.display = "block";
 
 
 function kembaliKeHalamanUtama(){
-// Tampilkan kembali halaman utama persis seperti semula
 document.getElementById("lyricViewPage").style.display = "none";
 document.getElementById("mainPage").style.display = "grid";
 document.body.style.background = "#111111";
@@ -884,8 +914,6 @@ window.addEventListener(
   "resize",
   updatePageCounter
 );
-
- // Panggil fungsi awal saat halaman dimuat
 
  window.onload = function(){
     loadSongs();
