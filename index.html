@@ -25,6 +25,9 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <!-- Firebase Storage TIDAK dipakai lagi (butuh plan Blaze / kartu).
      File musik sekarang diupload ke Cloudinary — gratis selamanya, tanpa kartu. -->
+
+<!-- 📄 html2pdf.js — untuk fitur "Download PDF" di halaman lihat lirik -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 
 
@@ -193,20 +196,8 @@
 
 <script>
   /* ============================================================
-     🔥 KONFIGURASI FIREBASE — GANTI DENGAN MILIKMU SENDIRI
-     ============================================================
-     Cara mendapatkan nilai-nilai di bawah ini:
-     1. Buka https://console.firebase.google.com
-     2. Klik "Add project" → beri nama bebas (mis. "song-writer-pro") → lanjut sampai selesai
-     3. Di dashboard project, klik ikon "</>" (Web app) untuk daftarkan web app baru
-     4. Firebase akan menampilkan blok firebaseConfig persis seperti di bawah ini — salin ke sini
-     5. Di menu kiri: Build → Firestore Database → Create database → pilih "Start in test mode" (biar mudah dulu)
-     6. Di menu kiri: Build → Storage → Get started → pilih "Start in test mode" juga
-
-     ⚠️ "Test mode" artinya siapa saja yang tahu config-mu bisa baca/tulis data.
-     Aman untuk belajar/pribadi, tapi kalau nanti dipakai banyak orang,
-     baca bagian "SECURITY RULES" di bawah untuk menguncinya.
-  */
+     🔥 KONFIGURASI FIREBASE
+     ============================================================ */
   const firebaseConfig = {
   apiKey: "AIzaSyDbsnytQw6Y6QodWu2dRGkzDsakHhmlH_A",
   authDomain: "song-writer-pro.firebaseapp.com",
@@ -223,11 +214,7 @@
 
   /* ============================================================
      🌤️ KONFIGURASI CLOUDINARY — untuk upload file musik
-     ============================================================
-     - CLOUD_NAME sudah diisi sesuai akun kamu.
-     - UPLOAD_PRESET: ganti dengan nama preset "Unsigned" yang kamu
-       buat di Cloudinary Console → Settings → Upload → Upload presets.
-  */
+     ============================================================ */
   const CLOUDINARY_CLOUD_NAME = "y6hrjigr";
   const CLOUDINARY_UPLOAD_PRESET = "song_writer_music";
   const CLOUDINARY_UPLOAD_URL = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
@@ -837,9 +824,14 @@ const html = `
         🖨 Print
       </button>
 
+      <button class="pdf-download"
+        onclick="downloadLirikPDF()">
+        ⬇️ Download PDF
+      </button>
+
     </div>
 
-    <div class="pdf-paper">
+    <div class="pdf-paper" id="pdfPaperContent">
 
       <h1 class="pdf-title">${judul}</h1>
 
@@ -865,6 +857,35 @@ document.getElementById("lyricViewPage").style.display = "block";
 }
 
 
+// ✅ Download lembaran lirik yang sedang ditampilkan sebagai file PDF
+function downloadLirikPDF(){
+  const elemen = document.getElementById("pdfPaperContent");
+  if(!elemen){ alert("Buka halaman lirik dulu"); return; }
+
+  const judulLagu = currentSongCard
+    ? currentSongCard.querySelector(".song-title").innerText
+    : "lirik";
+  const namaFile = judulLagu.replace(/[^a-z0-9\-_ ]/gi, "").trim() || "lirik";
+
+  const tombolDownload = document.querySelector(".pdf-download");
+  const teksAsli = tombolDownload ? tombolDownload.innerText : "";
+  if(tombolDownload){ tombolDownload.innerText = "⏳ Menyiapkan PDF..."; tombolDownload.disabled = true; }
+
+  const opsi = {
+    margin: 10,
+    filename: namaFile + ".pdf",
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
+    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
+  };
+
+  html2pdf().set(opsi).from(elemen).save().then(() => {
+    if(tombolDownload){ tombolDownload.innerText = teksAsli; tombolDownload.disabled = false; }
+  }).catch((error) => {
+    alert("Gagal membuat PDF: " + error.message);
+    if(tombolDownload){ tombolDownload.innerText = teksAsli; tombolDownload.disabled = false; }
+  });
+}
 
 
 function kembaliKeHalamanUtama(){
@@ -920,5 +941,20 @@ window.addEventListener(
     updatePageCounter();
 };
 </script>
+
+<!-- 🎨 Gaya kecil untuk tombol download supaya konsisten dengan tombol Print yang sudah ada -->
+<style>
+  .pdf-download{
+    background:#f3f4f6;
+    border:none;
+    padding:8px 14px;
+    border-radius:6px;
+    font-weight:600;
+    cursor:pointer;
+    margin-left:8px;
+  }
+  .pdf-download:hover{ background:#e5e7eb; }
+  .pdf-download:disabled{ opacity:0.6; cursor:not-allowed; }
+</style>
 </body>
 </html>
