@@ -826,7 +826,7 @@ const html = `
 
       <button class="pdf-download"
         onclick="downloadLirikPDF()">
-        ⬇ Download PDF
+        ⬇️ Download PDF
       </button>
 
     </div>
@@ -866,6 +866,7 @@ function downloadLirikPDF(){
     ? currentSongCard.querySelector(".song-title").innerText
     : "lirik";
   const namaFile = judulLagu.replace(/[^a-z0-9\-_ ]/gi, "").trim() || "lirik";
+  const namaFileLengkap = namaFile + ".pdf";
 
   const tombolDownload = document.querySelector(".pdf-download");
   const teksAsli = tombolDownload ? tombolDownload.innerText : "";
@@ -873,18 +874,35 @@ function downloadLirikPDF(){
 
   const opsi = {
     margin: 10,
-    filename: namaFile + ".pdf",
+    filename: namaFileLengkap,
     image: { type: "jpeg", quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true, backgroundColor: "#ffffff" },
     jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
   };
 
-  html2pdf().set(opsi).from(elemen).save().then(() => {
+  const worker = html2pdf().set(opsi).from(elemen);
+
+  const selesai = () => {
     if(tombolDownload){ tombolDownload.innerText = teksAsli; tombolDownload.disabled = false; }
-  }).catch((error) => {
+  };
+  const gagal = (error) => {
     alert("Gagal membuat PDF: " + error.message);
-    if(tombolDownload){ tombolDownload.innerText = teksAsli; tombolDownload.disabled = false; }
-  });
+    selesai();
+  };
+
+  // 🔗 Kalau dijalankan di dalam app WebView (jembatan Android tersedia),
+  // kirim PDF-nya ke kode native supaya disimpan ke folder Downloads HP —
+  // karena WebView tidak bisa mendownload file lewat cara blob: biasa.
+  if(window.Android && typeof window.Android.saveBase64File === "function"){
+    worker.outputPdf('datauristring').then((dataUri) => {
+      window.Android.saveBase64File(dataUri, namaFileLengkap, "application/pdf");
+      selesai();
+    }).catch(gagal);
+  } else {
+    // Di browser biasa (Chrome/Firefox saat kamu tes di komputer/HP langsung
+    // lewat browser), cara lama tetap dipakai — sudah berfungsi normal di sana.
+    worker.save().then(selesai).catch(gagal);
+  }
 }
 
 
